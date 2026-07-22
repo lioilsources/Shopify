@@ -1,0 +1,67 @@
+# Produkční stack pro NAS (Ubuntu + docker compose).
+# Spuštění na NAS z rootu repa:
+#   docker compose -f infra/nas/docker-compose.prod.yml up -d --build
+# Před startem: zkopíruj .env.example -> .env (LLM_BASE_URL míří na Spark)
+# a nastav doménu v infra/nas/Caddyfile.
+name: chatshop-prod
+
+services:
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - web
+    restart: unless-stopped
+
+  web:
+    build: ../../apps/web
+    environment:
+      DATABASE_URL: postgresql://chatshop:${POSTGRES_PASSWORD:-chatshop}@db:5432/chatshop
+      BRAIN_URL: http://brain:8000
+    depends_on:
+      db:
+        condition: service_healthy
+      brain:
+        condition: service_started
+    restart: unless-stopped
+
+  brain:
+    build: ../../services/brain
+    environment:
+      DATABASE_URL: postgresql+psycopg://chatshop:${POSTGRES_PASSWORD:-chatshop}@db:5432/chatshop
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      LLM_MODEL: ${LLM_MODEL:-Qwen/Qwen2.5-32B-Instruct-AWQ}
+      LLM_API_KEY: ${LLM_API_KEY:-not-needed}
+      EMBEDDINGS_BASE_URL: ${EMBEDDINGS_BASE_URL:-}
+      EMBEDDINGS_MODEL: ${EMBEDDINGS_MODEL:-BAAI/bge-m3}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: chatshop
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-chatshop}
+      POSTGRES_DB: chatshop
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ../init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chatshop"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  caddy-data:
+  caddy-config:

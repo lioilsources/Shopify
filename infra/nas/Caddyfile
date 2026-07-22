@@ -1,0 +1,5 @@
+# Nahraď doménou, která míří na NAS (A/AAAA záznam).
+# Let's Encrypt certifikát si Caddy vyřídí sám.
+shop.example.com {
+	reverse_proxy web:3000
+}

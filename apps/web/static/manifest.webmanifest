@@ -1,0 +1,18 @@
+{
+	"name": "ChatShop",
+	"short_name": "ChatShop",
+	"description": "E-shop s nákupním AI asistentem",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#f8fafc",
+	"theme_color": "#0f172a",
+	"lang": "cs",
+	"icons": [
+		{
+			"src": "/favicon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any"
+		}
+	]
+}

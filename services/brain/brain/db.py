@@ -1,0 +1,15 @@
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
+
+from brain.config import settings
+
+engine = create_engine(settings.database_url, pool_pre_ping=True)
+SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
+
+
+def get_session():
+    with SessionLocal() as session:
+        yield session
+
+
+__all__ = ["engine", "SessionLocal", "Session", "get_session"]

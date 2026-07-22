@@ -1,0 +1,19 @@
+name: chatshop
+
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: chatshop
+      POSTGRES_PASSWORD: chatshop
+      POSTGRES_DB: chatshop
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chatshop"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
