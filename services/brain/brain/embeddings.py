@@ -43,7 +43,8 @@ def embed(text: str) -> list[float]:
         return mock_embed(text, settings.embedding_dim)
     resp = httpx.post(
         f"{settings.embeddings_base_url.rstrip('/')}/embeddings",
-        json={"model": settings.embeddings_model, "input": text},
+        # encoding_format explicitně: LiteLLM jinak pošle None a vLLM validace to odmítne
+        json={"model": settings.embeddings_model, "input": text, "encoding_format": "float"},
         timeout=60,
     )
     resp.raise_for_status()
