@@ -1,7 +1,11 @@
 """Seed demo dat: trička, boty, HDD — včetně filter schémat a embeddingů.
 
-Spuštění: python -m brain.seed
+Spuštění: python -m brain.seed             # naplní prázdnou DB
+          python -m brain.seed --reembed   # přepočítá embeddingy všech produktů
+                                           # (nutné po přechodu mock -> reálný model)
 """
+
+import sys
 
 from sqlalchemy import select
 
@@ -95,6 +99,30 @@ PRODUCTS = [
 ]
 
 
+def embed_text_for(product: Product) -> str:
+    return " ".join(
+        [
+            product.name,
+            product.description or "",
+            *(f"{k} {v}" for k, v in (product.attributes or {}).items()),
+        ]
+    )
+
+
+def reembed() -> None:
+    with SessionLocal() as session:
+        products = list(session.scalars(select(Product)))
+        for product in products:
+            vector = embed(embed_text_for(product))
+            existing = session.get(ProductEmbedding, product.id)
+            if existing is None:
+                session.add(ProductEmbedding(product_id=product.id, embedding=vector))
+            else:
+                existing.embedding = vector
+        session.commit()
+        print(f"Re-embed hotov: {len(products)} produktů.")
+
+
 def run() -> None:
     with SessionLocal() as session:
         if session.scalar(select(Product).limit(1)) is not None:
@@ -133,4 +161,7 @@ def run() -> None:
 
 
 if __name__ == "__main__":
-    run()
+    if "--reembed" in sys.argv:
+        reembed()
+    else:
+        run()

@@ -1,4 +1,5 @@
-"""Klient pro embeddingy: TEI na DGX Sparku, nebo deterministický mock.
+"""Klient pro embeddingy: OpenAI-compatible /v1/embeddings (vLLM za AiStack
+gatewayí na DGX Sparku), nebo deterministický mock.
 
 Mock skládá vektor z hash-seedovaných pseudonáhodných vektorů jednotlivých
 slov — překrývající se slova dávají podobné vektory, takže similarity search
@@ -41,9 +42,9 @@ def embed(text: str) -> list[float]:
     if not settings.embeddings_enabled:
         return mock_embed(text, settings.embedding_dim)
     resp = httpx.post(
-        f"{settings.embeddings_base_url.rstrip('/')}/embed",
-        json={"inputs": text},
-        timeout=30,
+        f"{settings.embeddings_base_url.rstrip('/')}/embeddings",
+        json={"model": settings.embeddings_model, "input": text},
+        timeout=60,
     )
     resp.raise_for_status()
-    return resp.json()[0]
+    return resp.json()["data"][0]["embedding"]

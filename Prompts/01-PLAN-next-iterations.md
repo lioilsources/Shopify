@@ -5,16 +5,22 @@ web (SvelteKit PWA, chat + galerie s dynamickými filtry), brain (FastAPI, RAG
 chat přes SSE, ingest s merge filter schémat), Postgres+pgvector se seed daty,
 deployment konfigurace pro NAS i Spark připravené. Viz ARCHITECTURE.md.
 
-## Iterace 1 — napojení Sparku (další krok)
+## Iterace 1 — napojení Sparku (HOTOVO 2026-07-22)
 
-1. Na Sparku: `docker compose -f infra/spark/docker-compose.llm.yml up -d`
-   (vLLM s Qwen2.5-32B-AWQ na :8001, TEI s bge-m3 na :8002).
-2. V `.env`: `LLM_BASE_URL=http://<spark>:8001/v1`,
-   `EMBEDDINGS_BASE_URL=http://<spark>:8002`.
-3. Přidat `python -m brain.seed --reembed` — přepočet embeddingů existujících
-   produktů reálným modelem (mock hash-vektory jsou s bge-m3 nekompatibilní).
-4. Ověřit: chat odpovídá modelem a doporučuje správné produkty; ingest bez
-   ručních atributů extrahuje strukturované atributy z textu.
+Realizováno jinak než původní návrh: Spark už má AiStack (LiteLLM gateway
+:8080), takže místo samostatného `infra/spark/docker-compose.llm.yml` vznikl
+**Shopify modul přímo v AiStacku** (`deploy/docker-compose.shopify.yaml`):
+
+- `shop` — nvidia/Qwen3-32B-FP4 přes vLLM (port 8015), sdílí HF cache
+  s translate; `make up-shopify`.
+- `shop-embed` — BAAI/bge-m3, vLLM `--runner pooling` (port 8016);
+  `make download-shop-embed`.
+- LiteLLM routy `shop` + `shop-embed`, fallback řetězec `shop -> fallback`.
+- Brain volá gateway: `LLM_BASE_URL=http://192.168.88.66:8080/v1`
+  (chat i embeddings přes jeden endpoint, routing podle `model`).
+- `python -m brain.seed --reembed` přepočítá embeddingy po přechodu z mocku.
+- Pozn.: `infra/spark/docker-compose.llm.yml` v tomto repu je tím pádem
+  jen záložní varianta pro nasazení bez AiStacku.
 
 ## Iterace 2 — reálný web lookup v ingest pipeline
 
