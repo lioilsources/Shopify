@@ -42,7 +42,61 @@ nastav v `.env` endpoint vLLM na DGX Spark — viz `.env.example` a
 
 ---
 
-## Investor pitch
+## Investor pitch (English)
+
+**In one sentence:** an e-shop whose top 20 % of the screen is a chat assistant
+and whose bottom 80 % is a gallery with filters that generate themselves from
+whatever is being sold.
+
+### Problem
+
+Two problems that belong together. Shoppers can't describe what they want in the
+language of filters ("under 5,000, for trail running, not too heavy") — and the
+shop hands them checkboxes. And the shop operator has to invent and maintain a
+set of attributes and filters by hand for every new category; that is why small
+shops filter by price and brand and nothing else.
+
+### Solution
+
+A chat-first interface over RAG search across the catalogue (PostgreSQL +
+pgvector). The assistant answers and **at the same time changes the selection in
+the gallery below it** — the chat isn't a widget beside the product, it *is* the
+search field. The other half is an **ingest pipeline**: when an item is added,
+the system looks it up on the web, an LLM derives attributes from what it finds
+and generates the filter schema for that category. Filters emerge from the
+catalogue, not from an administrator's spreadsheet.
+
+### Why it can win
+
+- **The automatic filter is the harder and more valuable half.** Everyone ships
+  a conversational widget these days; nobody addresses the fact that the
+  catalogue holds no structured data for the chat to lean on. ChatShop solves
+  both with one model.
+- **Unit economics.** Chat in every session means a per-visit cost on a
+  commercial API. On our own DGX Spark (Qwen3-32B-FP4 for chat, BGE-M3 for
+  embeddings) it is a fixed hardware cost that does not scale with traffic.
+- **Data never leaves the customer's machine.** The application layer
+  (SvelteKit PWA + FastAPI + pgvector) runs on a NAS behind Caddy with TLS; the
+  GPU layer sits elsewhere and is not exposed to the internet. An argument for
+  anyone unwilling to send their price list to someone else's API.
+
+### Status
+
+Scaffold and first iteration, July 2026. The data model, streaming RAG chat,
+ingest pipeline and the connection to the production LLM gateway on Spark are in
+place. Without `LLM_BASE_URL` set, the chat runs in mock mode. There is no
+payment gateway, no order flow and no real catalogue — this is a working core,
+not a turnkey shop.
+
+### Next milestones
+
+Orders and payments, a pilot catalogue from a real merchant, and measuring
+conversion against a conventional filtered gallery. That last one is the only
+number this product stands or falls on.
+
+---
+
+## Investor pitch (česky)
 
 **Jednou větou:** e-shop, jehož horních 20 % obrazovky je chat s asistentem
 a spodních 80 % galerie, jejíž filtry se generují samy z toho, co se prodává.
