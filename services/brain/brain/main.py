@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from brain import admin, chat, ingest
+from brain import admin, chat, ingest, public
 from brain.search import search_mode
 from brain.config import settings
 
@@ -17,6 +17,7 @@ app.add_middleware(
 app.include_router(chat.router)
 app.include_router(ingest.router)
 app.include_router(admin.router)
+app.include_router(public.router)
 
 
 @app.get("/health")

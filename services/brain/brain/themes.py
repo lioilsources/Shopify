@@ -25,6 +25,7 @@ IMAGE_FILTERS: list[tuple[str, str, str]] = [
     ("orientace", "Orientace", "set"),
     ("pomer_stran", "Poměr stran", "set"),
     ("megapixely", "Rozlišení (Mpx)", "range"),
+    ("hodi_se_na", "Hodí se na", "set"),
 ]
 
 

@@ -21,6 +21,7 @@ from sqlalchemy.orm import Session
 from brain.catalog import set_status, upsert_product
 from brain.config import settings
 from brain.gallery_client import GalleryExport
+from brain.fitness import SUITS_ATTR, Profile, grade_all, store_fitness, suits_labels, sync_profiles
 from brain.gate import evaluate, reason
 from brain.models import STATUS_HIDDEN, STATUS_LISTED, ImportState, Product
 from brain.storage import LocalStorage
@@ -122,6 +123,7 @@ def import_item(
     item: dict[str, Any],
     stats: ImportStats,
     categories: dict[str, Any] | None = None,
+    profiles: list[Profile] | None = None,
 ) -> None:
     theme = THEMES.get(item.get("theme") or "")
     sha = (item.get("sha256") or "").lower()
@@ -149,6 +151,13 @@ def import_item(
         stats.missing_original += 1
 
     category = (categories or ensure_themes(session))[item["theme"]]
+    attributes = attributes_for(item)
+    grades = None
+    w, h = item.get("width"), item.get("height")
+    if isinstance(w, int) and isinstance(h, int) and w > 0 and h > 0:
+        profiles = profiles if profiles is not None else sync_profiles(session)
+        grades = grade_all(w, h, profiles)
+        attributes[SUITS_ATTR] = suits_labels(grades, profiles)
     product, created = upsert_product(
         session,
         category_id=category.id,
@@ -156,9 +165,11 @@ def import_item(
         description=(item.get("caption") or "").strip(),
         price_czk=None,
         image_url="",
-        attributes=attributes_for(item),
+        attributes=attributes,
         source_key=key,
     )
+    if grades is not None:
+        store_fitness(session, product, grades)
     product.gate_reasons = reasons
     product.source_meta = _source_meta(item)
     product.image_sha256 = sha
@@ -196,10 +207,11 @@ def run_import(
     try:
         state = _get_state(session, f"gallery:{collection}")
         categories = ensure_themes(session)
+        profiles = sync_profiles(session)
         until = state.cursor
         for items, page_until in gallery.changes(collection, state.cursor):
             for item in items:
-                import_item(session, gallery, storage, item, stats, categories)
+                import_item(session, gallery, storage, item, stats, categories, profiles)
             session.flush()
             until = page_until or until
         fixed = retry_missing_originals(session, gallery, storage)

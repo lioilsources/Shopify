@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Any
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import CheckConstraint, Computed, ForeignKey, Index, Numeric, String, Text, func, text
+from sqlalchemy import Boolean, CheckConstraint, Computed, Float, ForeignKey, Index, Integer, Numeric, String, Text, func, text
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -116,6 +116,43 @@ class ImportState(Base):
     source: Mapped[str] = mapped_column(String(64), primary_key=True)
     cursor: Mapped[str | None] = mapped_column(Text, nullable=True)
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now(), onupdate=func.now())
+
+
+class PrintProfile(Base):
+    """Print product profile from the seed (brain/data/print_profiles.yaml)."""
+
+    __tablename__ = "print_profiles"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    group_key: Mapped[str] = mapped_column(String(32))
+    label_cs: Mapped[str] = mapped_column(String(128))
+    label_en: Mapped[str] = mapped_column(String(128))
+    spec: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    phase: Mapped[int] = mapped_column(Integer)
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
+class ProductFitness(Base):
+    """Grade of one image for one print profile (ok / upscale / caveat / no)."""
+
+    __tablename__ = "product_fitness"
+    __table_args__ = (
+        CheckConstraint("grade IN ('ok', 'upscale', 'caveat', 'no')", name="ck_fitness_grade"),
+        Index("ix_product_fitness_profile_grade", "profile_id", "grade"),
+    )
+
+    product_id: Mapped[int] = mapped_column(
+        ForeignKey("products.id", ondelete="CASCADE"), primary_key=True
+    )
+    profile_id: Mapped[str] = mapped_column(
+        ForeignKey("print_profiles.id", ondelete="CASCADE"), primary_key=True
+    )
+    grade: Mapped[str] = mapped_column(String(8))
+    max_long_cm: Mapped[float | None] = mapped_column(Float, nullable=True)
+    max_short_cm: Mapped[float | None] = mapped_column(Float, nullable=True)
+    upscale: Mapped[float | None] = mapped_column(Float, nullable=True)
+    crop: Mapped[float | None] = mapped_column(Float, nullable=True)
+    note: Mapped[str] = mapped_column(Text, default="")
 
 
 def has_blocking_reason(product: Product) -> bool:

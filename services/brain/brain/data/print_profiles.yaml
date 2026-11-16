@@ -1,0 +1,217 @@
+# Print profiles seed (Prompts/03-USE-CASES.md, "Tvar profilu").
+# Numbers are estimates until checked against the producer spec (docs/FULFILMENT.md);
+# `verified: true` marks rows already corrected from a producer.
+# area_cm: [short, long] of the smallest offered size; max_area_cm: the largest.
+# aspect: free (follows the image) | fixed (crop to area ratio) | panorama (long thin, outpaint allowed)
+# Only profiles that need no vector/derive conversion are in phase 1.
+
+- id: tshirt-dtg
+  group: textile
+  label: {cs: Tričko, en: T-shirt}
+  area_cm: [30, 40]
+  max_area_cm: [38, 46]
+  aspect: free
+  view_distance_m: 0.5
+  dpi: {min: 150, target: 300}
+  max_px: 5400
+  output: {format: png, alpha: true, icc: sRGB}
+  bleed_mm: 0
+  derive: [remove-background]
+  fulfilment: pod
+  phase: 4
+  verified: true
+
+- id: tote-bag
+  group: textile
+  label: {cs: Plátěná taška, en: Tote bag}
+  area_cm: [28, 30]
+  aspect: free
+  dpi: {min: 150, target: 300}
+  max_px: 3500
+  output: {format: png, alpha: true, icc: sRGB}
+  derive: [remove-background]
+  fulfilment: pod
+  phase: 4
+
+- id: poster
+  group: wall
+  label: {cs: Plakát, en: Poster}
+  area_cm: [29.7, 42]
+  max_area_cm: [84.1, 118.9]
+  aspect: fixed
+  dpi: {min: 150, target: 300}
+  max_px: 7000
+  output: {format: png, icc: sRGB}
+  bleed_mm: 3
+  fulfilment: pod
+  phase: 4
+
+- id: fine-art
+  group: wall
+  label: {cs: Fine-art tisk, en: Fine-art print}
+  area_cm: [50, 70]
+  aspect: fixed
+  dpi: {min: 300, target: 300}
+  max_px: 8300
+  output: {format: tiff, icc: sRGB}
+  fulfilment: pod
+  phase: 4
+
+- id: canvas
+  group: wall
+  label: {cs: Plátno na rámu, en: Canvas}
+  area_cm: [40, 60]
+  max_area_cm: [100, 150]
+  aspect: fixed
+  dpi: {min: 100, target: 150}
+  max_px: 9500
+  output: {format: png, icc: sRGB}
+  derive: [mirror-wrap]
+  fulfilment: pod
+  phase: 4
+  verified: true
+
+- id: metal-acrylic
+  group: wall
+  label: {cs: Obraz na kovu nebo akrylu, en: Metal or acrylic print}
+  area_cm: [30, 45]
+  max_area_cm: [80, 120]
+  aspect: fixed
+  dpi: {min: 150, target: 300}
+  max_px: 9000
+  output: {format: png, icc: sRGB}
+  fulfilment: pod
+  phase: 4
+  trending: true
+
+- id: tin-sign
+  group: wall
+  label: {cs: Plechová cedule, en: Tin sign}
+  area_cm: [20, 30]
+  aspect: fixed
+  dpi: {min: 300, target: 300}
+  max_px: 3500
+  output: {format: png, icc: sRGB}
+  fulfilment: pod
+  phase: 4
+  trending: true
+
+- id: wallpaper-mural
+  group: wall
+  label: {cs: Fototapeta, en: Wall mural}
+  area_cm: [250, 250]
+  max_area_cm: [250, 400]
+  aspect: fixed
+  dpi: {min: 72, target: 150}
+  max_px: 16000
+  output: {format: png, icc: sRGB}
+  fulfilment: partner
+  phase: 5
+
+- id: kitchen-glass
+  group: wall
+  label: {cs: Sklo za kuchyňskou linku, en: Kitchen splashback}
+  area_cm: [60, 200]
+  max_area_cm: [60, 400]
+  aspect: panorama
+  dpi: {min: 100, target: 150}
+  max_px: 16000
+  output: {format: png, icc: sRGB}
+  fulfilment: partner
+  phase: 5
+  trending: true
+
+- id: mug
+  group: home
+  label: {cs: Hrnek, en: Mug}
+  area_cm: [9.6, 20]
+  aspect: fixed
+  dpi: {min: 300, target: 300}
+  max_px: 2700
+  output: {format: png, icc: sRGB}
+  bleed_mm: 2
+  fulfilment: pod
+  phase: 4
+  verified: true
+
+- id: cushion
+  group: home
+  label: {cs: Polštář, en: Cushion}
+  area_cm: [40, 40]
+  max_area_cm: [50, 50]
+  aspect: fixed
+  dpi: {min: 150, target: 200}
+  max_px: 3900
+  output: {format: png, icc: sRGB}
+  fulfilment: pod
+  phase: 4
+
+- id: blanket
+  group: home
+  label: {cs: Deka, en: Blanket}
+  area_cm: [150, 200]
+  aspect: fixed
+  dpi: {min: 75, target: 100}
+  max_px: 7900
+  output: {format: png, icc: sRGB}
+  fulfilment: pod
+  phase: 4
+  trending: true
+
+- id: puzzle
+  group: home
+  label: {cs: Puzzle, en: Jigsaw puzzle}
+  area_cm: [48, 68]
+  aspect: fixed
+  dpi: {min: 200, target: 300}
+  max_px: 8000
+  output: {format: png, icc: sRGB}
+  fulfilment: pod
+  phase: 4
+
+- id: mouse-pad
+  group: home
+  label: {cs: Podložka pod myš, en: Mouse pad}
+  area_cm: [21, 25]
+  aspect: fixed
+  dpi: {min: 200, target: 300}
+  max_px: 3000
+  output: {format: png, icc: sRGB}
+  fulfilment: pod
+  phase: 4
+
+- id: desk-mat
+  group: home
+  label: {cs: Herní podložka XXL, en: Desk mat}
+  area_cm: [46, 91]
+  aspect: fixed
+  dpi: {min: 300, target: 300}
+  max_px: 10800
+  output: {format: png, icc: sRGB}
+  fulfilment: pod
+  phase: 4
+  trending: true
+  verified: true
+
+- id: phone-case
+  group: home
+  label: {cs: Obal na mobil, en: Phone case}
+  area_cm: [9, 18]
+  aspect: fixed
+  dpi: {min: 300, target: 300}
+  max_px: 2100
+  output: {format: png, icc: sRGB}
+  fulfilment: pod
+  phase: 4
+
+- id: growth-chart
+  group: kids
+  label: {cs: Růstový metr, en: Growth chart}
+  area_cm: [30, 150]
+  aspect: panorama
+  dpi: {min: 150, target: 150}
+  max_px: 8900
+  output: {format: png, icc: sRGB}
+  fulfilment: partner
+  phase: 4
+  trending: true
