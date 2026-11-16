@@ -6,9 +6,11 @@
 </script>
 
 <article class="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-	<img src={product.image_url} alt={product.name} class="aspect-square w-full object-cover" />
+	<a href={`/p/${product.id}`} class="block">
+		<img src={product.image_url} alt={product.name} class="aspect-square w-full object-cover" loading="lazy" />
+	</a>
 	<div class="flex flex-1 flex-col gap-1 p-3">
-		<h3 class="font-medium leading-tight">{product.name}</h3>
+		<h3 class="font-medium leading-tight"><a href={`/p/${product.id}`} class="hover:underline">{product.name}</a></h3>
 		<p class="line-clamp-2 text-xs text-slate-500">{product.description}</p>
 		<div class="mt-auto flex items-center justify-between pt-2">
 			{#if product.price_czk != null}

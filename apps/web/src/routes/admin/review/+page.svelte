@@ -36,7 +36,7 @@
 	}
 
 	const imageSrc = (p: AdminProduct) =>
-		p.image_url || (p.image_sha256 ? `/api/admin/media/${p.image_sha256}` : '');
+		p.image_sha256 ? `/api/admin/media/${p.image_sha256}` : p.image_url;
 	const isBlocked = (p: AdminProduct) => p.gate_reasons.some((r) => r.blocking);
 
 	async function load() {

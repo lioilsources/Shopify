@@ -61,3 +61,19 @@ export interface AdminProduct extends Product {
 	created_at: string | null;
 	reviewed_at: string | null;
 }
+
+export type FitnessGrade = 'ok' | 'upscale' | 'caveat' | 'no';
+
+export interface FitnessRow {
+	profile_id: string;
+	label_cs: string;
+	group: string;
+	grade: FitnessGrade;
+	/** [short, long] in cm, null when the profile is not offered */
+	max_cm: [number, number] | null;
+	note: string;
+}
+
+export interface ProductDetail extends Product {
+	category_name: string;
+}

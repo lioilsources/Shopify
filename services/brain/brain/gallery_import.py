@@ -23,6 +23,7 @@ from brain.config import settings
 from brain.gallery_client import GalleryExport
 from brain.fitness import SUITS_ATTR, Profile, grade_all, store_fitness, suits_labels, sync_profiles
 from brain.gate import evaluate, reason
+from brain.previews import preview_url
 from brain.models import STATUS_HIDDEN, STATUS_LISTED, ImportState, Product
 from brain.storage import LocalStorage
 from brain.themes import THEMES, ensure_themes
@@ -164,7 +165,7 @@ def import_item(
         name=name_for(item, theme[1]),
         description=(item.get("caption") or "").strip(),
         price_czk=None,
-        image_url="",
+        image_url=preview_url(sha),
         attributes=attributes,
         source_key=key,
     )
