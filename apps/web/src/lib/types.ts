@@ -47,9 +47,17 @@ export interface ChatMsg {
 
 export type ProductStatus = 'draft' | 'listed' | 'hidden';
 
+export interface GateReason {
+	code: string;
+	detail: string;
+	blocking: boolean;
+}
+
 export interface AdminProduct extends Product {
 	status: ProductStatus;
 	source_key: string | null;
+	image_sha256: string | null;
+	gate_reasons: GateReason[];
 	created_at: string | null;
 	reviewed_at: string | null;
 }

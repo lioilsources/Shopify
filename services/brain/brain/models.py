@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Any
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import CheckConstraint, Computed, ForeignKey, Index, Numeric, String, Text, func
+from sqlalchemy import CheckConstraint, Computed, ForeignKey, Index, Numeric, String, Text, func, text
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -67,6 +67,15 @@ class Product(Base):
     # Idempotency key from the source (e.g. image sha256); re-ingest updates the row.
     source_key: Mapped[str | None] = mapped_column(String(128), unique=True, nullable=True)
     reviewed_at: Mapped[datetime | None] = mapped_column(nullable=True)
+    # Publication gate findings, e.g. [{"code": "licence", "blocking": true, "detail": "..."}].
+    gate_reasons: Mapped[list[dict[str, Any]]] = mapped_column(
+        JSONB, default=list, server_default=text("'[]'::jsonb")
+    )
+    # Private source facts (model, prompt, tags, lineage); never public filters.
+    source_meta: Mapped[dict[str, Any]] = mapped_column(
+        JSONB, default=dict, server_default=text("'{}'::jsonb")
+    )
+    image_sha256: Mapped[str | None] = mapped_column(String(64), index=True, nullable=True)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now(), onupdate=func.now())
     search_tsv: Mapped[Any] = mapped_column(
@@ -97,3 +106,17 @@ class ProductEmbedding(Base):
     model: Mapped[str] = mapped_column(String(128), default="mock")
 
     product: Mapped[Product] = relationship(back_populates="embedding")
+
+
+class ImportState(Base):
+    """Incremental import cursor per source (e.g. "gallery:shop")."""
+
+    __tablename__ = "import_state"
+
+    source: Mapped[str] = mapped_column(String(64), primary_key=True)
+    cursor: Mapped[str | None] = mapped_column(Text, nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(server_default=func.now(), onupdate=func.now())
+
+
+def has_blocking_reason(product: Product) -> bool:
+    return any(r.get("blocking") for r in (product.gate_reasons or []))
