@@ -13,21 +13,21 @@ Navazuje na plán 02, fázi 1, krok 2 (adaptér obrázků). Předpoklad: jsou me
 - **`WORKER_TOKEN`:** je záměrně zúžený na import taxonomie. Pro shop se nepoužije.
 - **PR #14 (`session_prefix=showcase/`):** vybírá celé session, ne jednotlivé obrázky. Slouží výloze z generování (plán 04), kurátorský výběr nenahrazuje.
 
-## Rozhodnutí (Olin)
+## Rozhodnutí (Olin, 16. 11. 2026)
 
-| # | Otázka | Návrh |
+| # | Otázka | Rozhodnutí |
 |---|---|---|
-| K1 | Čím fotky značit | **Nový koncept „kolekce“** (`collections`), oddělený od LoRA datasetů. Alternativa: sloupec `kind` u datasetů. |
+| K1 | Čím fotky značit | **Nový koncept „kolekce“** (`collections`), oddělený od LoRA datasetů. |
 | K2 | Jedna kolekce, nebo jedna na téma | **Jedna kolekce `shop`**, téma (R13) je štítek u položky. |
 | K3 | Kde budou soubory obrázků | **Shop si originál zkopíruje k sobě** při importu, aby neběžel na galerii. |
-| K4 | Co se stane s fotkou odebranou z kolekce | **Produkt přejde do `hidden`**, nemaže se. |
+| K4 | Co se stane s fotkou odebranou z kolekce | **V shopu nic.** Kolekce jen přivádí nové fotky, prodej je neexkluzivní a viditelnost řídí shop. Skrytí vynutí jen bezpečnost: fotka přestane být `safe`, nebo je zablokovaná. |
 
 ## Část A — FineTuneGallery (jeden PR)
 
 1. **Migrace:**
    - `collections(id, slug UNIQUE, title, created_at)`
    - `collection_items(collection_id, image_id, theme, note, added_at, removed_at)`
-   - Odebrání nastaví `removed_at` (tombstone), aby se shop dozvěděl i o stažení.
+   - Odebrání nastaví `removed_at`. Shop to nepřebírá (K4), slouží jen pro historii v galerii.
 2. **API (admin, za CF Access jako zbytek UI):**
    - `GET /api/collections`
    - `POST /api/collections`
@@ -41,8 +41,8 @@ Navazuje na plán 02, fázi 1, krok 2 (adaptér obrázků). Předpoklad: jsou me
    - Nové obrázky dostanou `width`/`height` při ingestu.
    - Stávající doplní jednorázový backfill z PNG hlavičky. Stačí CPU, SPARK není potřeba.
 5. **Export:** `GET /api/export/collections/{slug}?since=<RFC3339>`
-   - Vynucený `view=shared` (`band='safe' AND unsure=0`) a `lineage=text`. Volající to nemůže vypnout. Položka, která tyhle podmínky nesplní, se vrátí jako stažená.
-   - Pole: `imageId`, `sha256`, `theme`, `caption`, `prompt`, `params`, `rootNodeId`, `width`, `height`, `band`, `addedAt`, `removedAt`.
+   - Vynucený `view=shared` (`band='safe' AND unsure=0`) a `lineage=text`. Volající to nemůže vypnout. Položka, která tyhle podmínky přestane splňovat, se vrátí jako `revoked` (bezpečnostní stažení).
+   - Pole: `imageId`, `sha256`, `theme`, `caption`, `prompt`, `params`, `rootNodeId`, `width`, `height`, `band`, `addedAt`, `revoked`.
    - Stránkování kurzorem. `since` vrací jen změny, takže import je přírůstkový.
 6. **Soubory přes export:** `GET /api/export/img/{sha256}` vydá jen obrázek, který v exportu skutečně je.
 7. **Auth:**
@@ -51,7 +51,7 @@ Navazuje na plán 02, fázi 1, krok 2 (adaptér obrázků). Předpoklad: jsou me
 8. **Testy:**
    - Export nikdy nevrátí obrázek mimo `safe`, `unsure` ani `upload`.
    - Bez tokenu vrací 401. Token neotevře nic mimo `/api/export/*`.
-   - Tombstone se propíše.
+   - Bezpečnostní stažení (`revoked`) se propíše, odebrání z kolekce ne.
 
 ## Část B — Shopify (krok 2 fáze 1)
 
@@ -61,13 +61,13 @@ Navazuje na plán 02, fázi 1, krok 2 (adaptér obrázků). Předpoklad: jsou me
    - `upsert_product` se `source_key = gallery:<imageId>`, stav `draft`, kategorie podle `theme`, bez ceny.
    - Do `attributes` jde téma, rozměry a `rootNodeId`.
    - Originál se zkopíruje do úložiště shopu (K3).
-3. **Odebraná položka (tombstone):** `set_status(hidden)`.
+3. **`revoked`:** `set_status(hidden)`. Odebrání z kolekce se v shopu neprojeví (K4). Stáhnout produkt z prodeje jde jen v `/admin/review`.
 4. **Zveřejnění:** Olin zveřejňuje v `/admin/review` jako dnes. Galerie vybírá, shop schvaluje.
 5. **Konfigurace v `.env`:** `GALLERY_URL`, `GALLERY_EXPORT_TOKEN`, CF client id a secret. Nic z toho se necommituje.
 6. **Testy:**
    - Import nad fixturou exportu.
    - Opakovaný import nic nezduplikuje.
-   - Tombstone produkt skryje.
+   - `revoked` produkt skryje, odebrání z kolekce ho nechá být.
 
 ## Postup kurátora (Olin)
 
@@ -81,4 +81,4 @@ Navazuje na plán 02, fázi 1, krok 2 (adaptér obrázků). Předpoklad: jsou me
 1. Merge galerie #13 a #15, pak import taxonomie (zvlášť, s kontrolou karantén).
 2. Část A jako jeden PR ve FineTuneGallery.
 3. Část B jako jeden PR tady.
-4. Ověření: 10 fotek v kolekci, import, schválení, viditelné v chatu a v galerii shopu. Odebrání jedné fotky ji v shopu skryje.
+4. Ověření: 10 fotek v kolekci, import, schválení, viditelné v chatu a v galerii shopu. Zablokování jedné fotky v galerii ji v shopu skryje.
