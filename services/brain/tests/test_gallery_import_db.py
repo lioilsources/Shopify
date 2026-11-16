@@ -198,3 +198,25 @@ def test_admin_media_serves_original(client, db, monkeypatch, tmp_path):
     assert res.status_code == 200 and res.headers["content-type"] == "image/png"
     assert client.get(f"/admin/media/{SHA_OK}").status_code == 401
     assert client.get("/admin/media/" + "0" * 64, headers=ADMIN).status_code == 404
+
+
+def test_import_grades_fitness_and_feeds_suits_filter(client, db, fake, storage):
+    from brain.models import FilterSchema, ProductFitness
+
+    fake.pages[None] = [[_item()]]
+    run_import(db, fake.client(), storage)
+    product = db.query(Product).one()
+    grades = {f.profile_id: f.grade for f in db.query(ProductFitness).filter_by(product_id=product.id)}
+    assert grades["poster"] == "upscale" and grades["mug"] == "caveat"  # 28 % crop
+    assert "Plakát" in product.attributes["hodi_se_na"]
+    assert "Hrnek" not in product.attributes["hodi_se_na"]
+
+    # Not public before listing
+    assert client.get(f"/products/{product.id}/fitness").status_code == 404
+    client.post("/admin/products/status", json={"ids": [product.id], "status": "listed"}, headers=ADMIN)
+    body = client.get(f"/products/{product.id}/fitness").json()
+    assert body["items"][0]["grade"] in {"ok", "upscale"}
+    suits = db.query(FilterSchema).filter_by(category_id=product.category_id, attr_key="hodi_se_na").one()
+    db.refresh(suits)
+    assert "Plakát" in suits.config["values"]
+    assert any(p["id"] == "poster" for p in client.get("/profiles").json())
