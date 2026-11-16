@@ -16,7 +16,7 @@ Realizováno jinak než původní návrh: Spark už má AiStack (LiteLLM gateway
 - `shop-embed` — BAAI/bge-m3, vLLM `--runner pooling` (port 8016);
   `make download-shop-embed`.
 - LiteLLM routy `shop` + `shop-embed`, fallback řetězec `shop -> fallback`.
-- Brain volá gateway: `LLM_BASE_URL=http://192.168.88.66:8080/v1`
+- Brain volá gateway: `LLM_BASE_URL=http://<SPARK_HOST>:8080/v1`
   (chat i embeddings přes jeden endpoint, routing podle `model`).
 - `python -m brain.seed --reembed` přepočítá embeddingy po přechodu z mocku.
 - Pozn.: záložní `infra/spark/docker-compose.llm.yml` byl 16. 11. 2026
