@@ -19,7 +19,8 @@ export interface Product {
 	category_slug: string;
 	name: string;
 	description: string;
-	price_czk: number;
+	/** null = priced per variant ("na poptávku") */
+	price_czk: number | null;
 	image_url: string;
 	attributes: Record<string, unknown>;
 }
@@ -33,7 +34,7 @@ export type ActiveFilters = Record<
 export interface ProductCard {
 	id: number;
 	name: string;
-	price_czk: number;
+	price_czk: number | null;
 	image_url: string;
 	category_slug: string;
 }
@@ -42,4 +43,13 @@ export interface ChatMsg {
 	role: 'user' | 'assistant';
 	content: string;
 	products?: ProductCard[];
+}
+
+export type ProductStatus = 'draft' | 'listed' | 'hidden';
+
+export interface AdminProduct extends Product {
+	status: ProductStatus;
+	source_key: string | null;
+	created_at: string | null;
+	reviewed_at: string | null;
 }

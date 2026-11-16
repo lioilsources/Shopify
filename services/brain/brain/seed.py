@@ -9,10 +9,10 @@ import sys
 
 from sqlalchemy import select
 
+from brain.catalog import refresh_embedding
 from brain.db import SessionLocal
-from brain.embeddings import embed
 from brain.filters import merge_attributes
-from brain.models import Category, Product, ProductEmbedding
+from brain.models import STATUS_LISTED, Category, Product
 
 CATEGORIES = [
     {"slug": "tricka", "name": "Trička"},
@@ -99,28 +99,15 @@ PRODUCTS = [
 ]
 
 
-def embed_text_for(product: Product) -> str:
-    return " ".join(
-        [
-            product.name,
-            product.description or "",
-            *(f"{k} {v}" for k, v in (product.attributes or {}).items()),
-        ]
-    )
-
-
 def reembed() -> None:
+    """Recompute vectors of all products with the configured model."""
     with SessionLocal() as session:
         products = list(session.scalars(select(Product)))
-        for product in products:
-            vector = embed(embed_text_for(product))
-            existing = session.get(ProductEmbedding, product.id)
-            if existing is None:
-                session.add(ProductEmbedding(product_id=product.id, embedding=vector))
-            else:
-                existing.embedding = vector
+        done = sum(refresh_embedding(session, p) for p in products)
         session.commit()
-        print(f"Re-embed hotov: {len(products)} produktů.")
+        print(f"Re-embed hotov: {done}/{len(products)} produktů.")
+        if done < len(products):
+            sys.exit("Embeddingy nejsou dostupné, zbytek zůstal bez vektoru.")
 
 
 def run() -> None:
@@ -147,14 +134,12 @@ def run() -> None:
                 price_czk=p["price_czk"],
                 image_url=p["image_url"],
                 attributes=p["attributes"],
+                status=STATUS_LISTED,  # demo data is approved
             )
             session.add(product)
             session.flush()
             merge_attributes(session, cat.id, p["attributes"], price_czk=p["price_czk"])
-            embed_text = " ".join(
-                [p["name"], p["description"], *(f"{k} {v}" for k, v in p["attributes"].items())]
-            )
-            session.add(ProductEmbedding(product_id=product.id, embedding=embed(embed_text)))
+            refresh_embedding(session, product)
 
         session.commit()
         print(f"Seed hotov: {len(CATEGORIES)} kategorie, {len(PRODUCTS)} produktů.")

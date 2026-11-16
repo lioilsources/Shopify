@@ -57,8 +57,9 @@ docker síti. Doména se nastavuje v `infra/nas/Caddyfile`.
 
 ### SPARK (NVIDIA DGX) — inference vrstva
 
-`infra/spark/docker-compose.llm.yml` na Sparku: **vLLM** (chat + extrakce
-atributů při ingestu) a **TEI** (embeddingy). Spark není vystavený do
+Modul Shopify v AiStacku na Sparku: LLM `shop` (chat + extrakce atributů
+při ingestu) a embeddingy `shop-embed` (bge-m3) za LiteLLM gatewayí. Spouští
+se jen přes `sparkctl` (broker); vlastní compose pro Spark repo nemá. Spark není vystavený do
 internetu — brain na NAS na něj volá po LAN/VPN přes `LLM_BASE_URL` /
 `EMBEDDINGS_BASE_URL`. Ingest *pipeline* (orchestrace, DB zápisy) tedy běží
 na NAS v brainu; *inference* (LLM, embeddingy) na Sparku.
@@ -139,7 +140,12 @@ product_embeddings product_id PK→products, embedding vector(1024)
 
 ## LLM stack na DGX Spark
 
-`infra/spark/docker-compose.llm.yml` — spouští se **na Sparku**:
+Modely běží v AiStacku (modul Shopify) za gatewayí a spouští je broker
+(`sparkctl`). Brain volá aliasy `shop` a `shop-embed`; když gateway neodpovídá,
+chat odpoví ze šablony a hledání jede jen fulltextem (plán 02, zásada 5).
+
+Původní popis vlastního vLLM + TEI compose:
+
 
 - **vLLM** (`vllm/vllm-openai`): výchozí model `Qwen/Qwen2.5-32B-Instruct-AWQ`
   — kompromis kvality a latence na 128 GB unified memory; jde změnit env

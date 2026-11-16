@@ -1,22 +1,13 @@
-"""Vektorové vyhledávání produktů pro chat (RAG)."""
+"""Context for the chat LLM built from search results (RAG)."""
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session, joinedload
+from brain.models import Product
+from brain.search import search_products
 
-from brain.embeddings import embed
-from brain.models import Product, ProductEmbedding
+__all__ = ["product_context", "search_products"]
 
 
-def search_products(session: Session, query: str, limit: int = 5) -> list[Product]:
-    query_vec = embed(query)
-    stmt = (
-        select(Product)
-        .join(ProductEmbedding)
-        .options(joinedload(Product.category))
-        .order_by(ProductEmbedding.embedding.cosine_distance(query_vec))
-        .limit(limit)
-    )
-    return list(session.scalars(stmt))
+def _price(p: Product) -> str:
+    return f"{p.price_czk} Kč" if p.price_czk is not None else "cena podle provedení"
 
 
 def product_context(products: list[Product]) -> str:
@@ -24,7 +15,7 @@ def product_context(products: list[Product]) -> str:
     for p in products:
         attrs = ", ".join(f"{k}: {v}" for k, v in (p.attributes or {}).items())
         lines.append(
-            f"- id={p.id} | {p.name} | {p.price_czk} Kč | kategorie: {p.category.name}"
+            f"- id={p.id} | {p.name} | {_price(p)} | kategorie: {p.category.name}"
             + (f" | {attrs}" if attrs else "")
             + (f" | {p.description[:200]}" if p.description else "")
         )

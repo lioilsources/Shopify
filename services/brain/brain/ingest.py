@@ -1,11 +1,16 @@
-"""Ingest pipeline: vložení položky -> dohledání -> extrakce atributů ->
-merge filter schémat -> embedding -> uložení.
+"""Ingest pipeline: lookup -> attribute extraction -> embedding -> draft.
 
-Web lookup je v 1. fázi stub — text o položce se předává ručně (`raw_text`),
-nebo se extrahuje jen z názvu. TODO: napojit SearXNG / search API.
+Every ingested product starts as a `draft` and is not public until an admin
+approves it (plan 02, invariant 3). Filters grow when a product gets listed,
+see brain.catalog.set_status. Re-ingest with the same `source_key` updates
+the row instead of creating a duplicate.
+
+The lookup is still a stub: text comes in as `raw_text` or just the name.
+Source adapters (e.g. the image gallery) plug in at `_lookup`.
 """
 
 import json
+import logging
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -14,13 +19,14 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from brain import llm
+from brain.auth import require_admin
+from brain.catalog import upsert_product
 from brain.config import settings
 from brain.db import get_session
-from brain.embeddings import embed
-from brain.filters import merge_attributes
-from brain.models import Category, Product, ProductEmbedding
+from brain.models import Category
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_admin)])
+log = logging.getLogger(__name__)
 
 EXTRACT_PROMPT = (
     "Jsi extrakční nástroj e-shopu. Z textu o produktu vytáhni strukturované "
@@ -33,11 +39,13 @@ EXTRACT_PROMPT = (
 class IngestRequest(BaseModel):
     category_slug: str
     name: str
-    price_czk: float
+    price_czk: float | None = None
     image_url: str = ""
+    # Stable id in the source (e.g. image sha256); makes re-ingest idempotent.
+    source_key: str | None = None
     url: str | None = None
     raw_text: str | None = None
-    # Ručně zadané atributy mají přednost před extrahovanými.
+    # Given attributes (manual entry, showcase brief) win over LLM extraction.
     attributes: dict[str, Any] = {}
 
 
@@ -49,12 +57,16 @@ async def _lookup(req: IngestRequest) -> str:
 async def _extract(text: str) -> tuple[dict[str, Any], str]:
     if not settings.llm_enabled:
         return {}, text
-    raw = await llm.complete(
-        [
-            {"role": "system", "content": EXTRACT_PROMPT},
-            {"role": "user", "content": text},
-        ]
-    )
+    try:
+        raw = await llm.complete(
+            [
+                {"role": "system", "content": EXTRACT_PROMPT},
+                {"role": "user", "content": text},
+            ]
+        )
+    except Exception as exc:  # LLM not running: ingest in reduced form (plan 02, §6)
+        log.warning("LLM unavailable, ingest without extraction: %s", exc)
+        return {}, text
     try:
         start, end = raw.index("{"), raw.rindex("}") + 1
         data = json.loads(raw[start:end])
@@ -73,23 +85,16 @@ async def ingest(req: IngestRequest, session: Session = Depends(get_session)):
     extracted, description = await _extract(text)
     attributes = {**extracted, **req.attributes}
 
-    product = Product(
+    product, created = upsert_product(
+        session,
         category_id=category.id,
         name=req.name,
         description=description if description != req.name else "",
         price_czk=req.price_czk,
         image_url=req.image_url,
         attributes=attributes,
+        source_key=req.source_key,
     )
-    session.add(product)
-    session.flush()
-
-    merge_attributes(session, category.id, attributes, price_czk=req.price_czk)
-
-    embed_text = " ".join(
-        [req.name, product.description, *(f"{k} {v}" for k, v in attributes.items())]
-    )
-    session.add(ProductEmbedding(product_id=product.id, embedding=embed(embed_text)))
     session.commit()
 
     return {
@@ -97,4 +102,6 @@ async def ingest(req: IngestRequest, session: Session = Depends(get_session)):
         "name": product.name,
         "attributes": attributes,
         "description": product.description,
+        "status": product.status,
+        "created": created,
     }

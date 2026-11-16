@@ -19,8 +19,8 @@ Realizováno jinak než původní návrh: Spark už má AiStack (LiteLLM gateway
 - Brain volá gateway: `LLM_BASE_URL=http://192.168.88.66:8080/v1`
   (chat i embeddings přes jeden endpoint, routing podle `model`).
 - `python -m brain.seed --reembed` přepočítá embeddingy po přechodu z mocku.
-- Pozn.: `infra/spark/docker-compose.llm.yml` v tomto repu je tím pádem
-  jen záložní varianta pro nasazení bez AiStacku.
+- Pozn.: záložní `infra/spark/docker-compose.llm.yml` byl 16. 11. 2026
+  smazán (běžel mimo broker).
 
 ## Iterace 2 — reálný web lookup v ingest pipeline
 

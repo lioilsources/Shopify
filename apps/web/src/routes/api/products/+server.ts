@@ -4,7 +4,10 @@ import type { ActiveFilters } from '$lib/types';
 import type { RequestHandler } from './$types';
 
 /**
- * GET /api/products?category=<slug>&filters=<url-encoded JSON ActiveFilters>
+ * GET /api/products?category=<slug>&filters=<url-encoded JSON ActiveFilters>&ids=<1,2,3>
+ *
+ * Only listed products are public. `ids` is the chat selection: the result
+ * keeps the order given by the chat (search relevance).
  *
  * Překlad aktivních filtrů na SQL nad JSONB `attributes`:
  *  - price_czk je sloupec, ostatní klíče jdou do attributes
@@ -22,8 +25,15 @@ export const GET: RequestHandler = async ({ url }) => {
 		// neplatný JSON ignorujeme
 	}
 
-	const conditions = [];
+	const ids = (url.searchParams.get('ids') ?? '')
+		.split(',')
+		.map((v) => Number.parseInt(v, 10))
+		.filter((v) => Number.isInteger(v) && v > 0)
+		.slice(0, 200);
+
+	const conditions = [sql`p.status = 'listed'`];
 	if (category) conditions.push(sql`c.slug = ${category}`);
+	if (ids.length) conditions.push(sql`p.id = ANY(${ids})`);
 
 	for (const [key, value] of Object.entries(filters)) {
 		if (value == null) continue;
@@ -49,9 +59,10 @@ export const GET: RequestHandler = async ({ url }) => {
 		}
 	}
 
-	const where = conditions.length
-		? conditions.slice(1).reduce((acc, c) => sql`${acc} AND ${c}`, sql`WHERE ${conditions[0]}`)
-		: sql``;
+	const where = conditions
+		.slice(1)
+		.reduce((acc, c) => sql`${acc} AND ${c}`, sql`WHERE ${conditions[0]}`);
+	const order = ids.length ? sql`array_position(${ids}::int[], p.id)` : sql`p.id`;
 
 	const rows = await sql`
 		SELECT p.id, c.slug AS category_slug, p.name, p.description,
@@ -59,7 +70,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		FROM products p
 		JOIN categories c ON c.id = p.category_id
 		${where}
-		ORDER BY p.id
+		ORDER BY ${order}
 	`;
 	return json(rows);
 };
