@@ -1,0 +1,29 @@
+# Dev Postgres + pgvector for ChatShop on JODA (the Mac runs no Docker).
+# Deployed to ~/deploy/Shopify, started with:
+#   docker compose -p shopify-dev -f docker-compose.db.yml up -d
+# Values come from ~/deploy/Shopify/.env (never committed):
+#   POSTGRES_PASSWORD  generated on JODA
+#   DB_BIND            LAN address of JODA so the Mac can connect (default loopback only)
+#   DB_PORT            5436 (see the shared port registry)
+#   DB_DIR             data dir; pool dataset once it exists, else ./data/dev/db
+# Schema is created by alembic from the Mac (`alembic upgrade head`); the init
+# dir only enables extensions on the first start of an empty volume.
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: chatshop
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: chatshop_dev
+    ports:
+      - "${DB_BIND:-127.0.0.1}:${DB_PORT:-5436}:5432"
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d:ro
+      - ${DB_DIR:-./data/dev/db}:/var/lib/postgresql/data
+    mem_limit: 256m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chatshop -d chatshop_dev"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
