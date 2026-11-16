@@ -11,8 +11,13 @@
 		<h3 class="font-medium leading-tight">{product.name}</h3>
 		<p class="line-clamp-2 text-xs text-slate-500">{product.description}</p>
 		<div class="mt-auto flex items-center justify-between pt-2">
-			<span class="text-lg font-semibold">{product.price_czk.toLocaleString('cs')} Kč</span>
+			{#if product.price_czk != null}
+				<span class="text-lg font-semibold">{product.price_czk.toLocaleString('cs')} Kč</span>
+			{:else}
+				<span class="text-sm text-slate-500">cena podle provedení</span>
+			{/if}
 			<button
+				disabled={product.price_czk == null}
 				onclick={() =>
 					cart.add({
 						id: product.id,
@@ -21,7 +26,7 @@
 						image_url: product.image_url,
 						category_slug: product.category_slug
 					})}
-				class="rounded-lg bg-sky-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-sky-700"
+				class="rounded-lg bg-sky-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-sky-700 disabled:opacity-40"
 			>
 				Do košíku
 			</button>

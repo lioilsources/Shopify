@@ -1,6 +1,15 @@
 <script lang="ts">
 	import type { ChatMsg, ProductCard } from '$lib/types';
-	import { cart } from '$lib/cart.svelte';
+
+	let {
+		category = null,
+		onselect
+	}: {
+		/** Category selected in the gallery; scopes the chat search. */
+		category?: string | null;
+		/** Chat results become the gallery selection (ids in relevance order). */
+		onselect: (ids: number[], query: string) => void;
+	} = $props();
 
 	let messages = $state<ChatMsg[]>([]);
 	let input = $state('');
@@ -18,7 +27,7 @@
 		input = '';
 		busy = true;
 		messages.push({ role: 'user', content: question });
-		messages.push({ role: 'assistant', content: '', products: [] });
+		messages.push({ role: 'assistant', content: '' });
 		// mutovat je nutné proxy z pole, ne původní objekt — jinak se změny nevykreslí
 		const assistant = messages[messages.length - 1];
 		scrollDown();
@@ -30,7 +39,8 @@
 				body: JSON.stringify({
 					messages: messages
 						.slice(0, -1)
-						.map(({ role, content }) => ({ role, content }))
+						.map(({ role, content }) => ({ role, content })),
+					category
 				})
 			});
 			if (!res.ok || !res.body) throw new Error(`Chat selhal (${res.status})`);
@@ -50,7 +60,10 @@
 					if (!event || !dataRaw) continue;
 					const data = JSON.parse(dataRaw);
 					if (event === 'token') assistant.content += data.text;
-					else if (event === 'products') assistant.products = data as ProductCard[];
+					else if (event === 'products') {
+						assistant.products = data as ProductCard[];
+						onselect(assistant.products.map((p) => p.id), question);
+					}
 					scrollDown();
 				}
 			}
@@ -78,22 +91,12 @@
 				>
 					{msg.content || (busy ? '…' : '')}
 				</span>
-				{#if msg.products?.length}
-					<div class="mt-2 flex gap-2 overflow-x-auto pb-1">
-						{#each msg.products as p (p.id)}
-							<div class="w-36 shrink-0 rounded-lg border border-slate-200 bg-white p-2 text-left">
-								<img src={p.image_url} alt={p.name} class="h-20 w-full rounded object-cover" />
-								<p class="mt-1 line-clamp-2 text-xs font-medium">{p.name}</p>
-								<p class="text-xs text-slate-500">{p.price_czk.toLocaleString('cs')} Kč</p>
-								<button
-									class="mt-1 w-full rounded bg-sky-600 px-1 py-0.5 text-xs text-white hover:bg-sky-700"
-									onclick={() => cart.add(p)}
-								>
-									Do košíku
-								</button>
-							</div>
-						{/each}
-					</div>
+				{#if msg.role === 'assistant' && msg.products}
+					<p class="mt-1 text-xs text-slate-400">
+						{msg.products.length
+							? `Výběr v galerii: ${msg.products.length} ${msg.products.length === 1 ? 'položka' : msg.products.length < 5 ? 'položky' : 'položek'}`
+							: 'Nic nenalezeno, galerie zůstala beze změny.'}
+					</p>
 				{/if}
 			</div>
 		{/each}

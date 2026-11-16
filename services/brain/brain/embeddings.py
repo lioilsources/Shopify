@@ -7,12 +7,15 @@ funguje i bez GPU (jen hůř).
 """
 
 import hashlib
+import logging
 import math
 import re
 
 import httpx
 
 from brain.config import settings
+
+log = logging.getLogger(__name__)
 
 
 def _word_vector(word: str, dim: int) -> list[float]:
@@ -38,14 +41,36 @@ def mock_embed(text: str, dim: int) -> list[float]:
     return [v / norm for v in acc]
 
 
-def embed(text: str) -> list[float]:
-    if not settings.embeddings_enabled:
-        return mock_embed(text, settings.embedding_dim)
+def _remote_embed(text: str) -> list[float]:
+    api_key = settings.embeddings_api_key or settings.llm_api_key
+    headers = {"Authorization": f"Bearer {api_key}"} if api_key and api_key != "not-needed" else {}
     resp = httpx.post(
         f"{settings.embeddings_base_url.rstrip('/')}/embeddings",
-        # encoding_format explicitně: LiteLLM jinak pošle None a vLLM validace to odmítne
+        # encoding_format explicitly: LiteLLM otherwise sends None and vLLM rejects it
         json={"model": settings.embeddings_model, "input": text, "encoding_format": "float"},
-        timeout=60,
+        headers=headers,
+        timeout=settings.embeddings_timeout,
     )
     resp.raise_for_status()
     return resp.json()["data"][0]["embedding"]
+
+
+def embed(text: str) -> list[float]:
+    """Embedding with the configured model; raises when the gateway is down."""
+    if not settings.embeddings_enabled:
+        return mock_embed(text, settings.embedding_dim)
+    return _remote_embed(text)
+
+
+def try_embed(text: str) -> list[float] | None:
+    """Like embed(), but returns None when the gateway is unavailable.
+
+    The shop must work without GPU (plan 02, invariant 5): callers fall back
+    to fulltext search, and ingest stores the product without a vector
+    (fill later with `python -m brain.seed --reembed`).
+    """
+    try:
+        return embed(text)
+    except (httpx.HTTPError, KeyError, IndexError, ValueError) as exc:
+        log.warning("embeddings unavailable, falling back to fulltext: %s", exc)
+        return None

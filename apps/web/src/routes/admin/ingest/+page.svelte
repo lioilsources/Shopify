@@ -30,7 +30,7 @@
 				body: JSON.stringify({
 					category_slug: form.category_slug,
 					name: form.name,
-					price_czk: Number(form.price_czk),
+					price_czk: form.price_czk === '' || form.price_czk == null ? null : Number(form.price_czk),
 					image_url: form.image_url,
 					url: form.url || null,
 					raw_text: form.raw_text || null,
@@ -54,7 +54,7 @@
 	<h1 class="text-xl font-bold">Vložení zboží</h1>
 	<p class="text-sm text-slate-500">
 		Pipeline dohledá informace o položce, extrahuje atributy (s LLM; bez něj použije ručně zadané)
-		a rozšíří filtry kategorie.
+		a založí ji jako koncept. Veřejná je až po schválení, kdy rozšíří filtry kategorie.
 	</p>
 
 	<form onsubmit={submit} class="space-y-3">
@@ -68,8 +68,8 @@
 		</label>
 		<div class="grid grid-cols-2 gap-3">
 			<label class="block text-sm">
-				Cena (Kč)
-				<input bind:value={form.price_czk} type="number" min="0" step="0.01" required class="mt-1 w-full rounded border border-slate-300 px-2 py-1.5" />
+				Cena (Kč, nepovinná)
+				<input bind:value={form.price_czk} type="number" min="0" step="0.01" class="mt-1 w-full rounded border border-slate-300 px-2 py-1.5" />
 			</label>
 			<label class="block text-sm">
 				URL obrázku

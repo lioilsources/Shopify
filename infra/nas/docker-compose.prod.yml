@@ -3,6 +3,7 @@
 #   docker compose -f infra/nas/docker-compose.prod.yml up -d --build
 # Před startem: zkopíruj .env.example -> .env (LLM_BASE_URL míří na Spark)
 # a nastav doménu v infra/nas/Caddyfile.
+# Zastaralé: nasazení na JODU za tunelem a CF Access přepíše plán 02, fáze 1 krok 7.
 name: chatshop-prod
 
 services:
@@ -22,8 +23,9 @@ services:
   web:
     build: ../../apps/web
     environment:
-      DATABASE_URL: postgresql://chatshop:${POSTGRES_PASSWORD:-chatshop}@db:5432/chatshop
+      DATABASE_URL: postgresql://chatshop:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/chatshop
       BRAIN_URL: http://brain:8000
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?set ADMIN_TOKEN}
     depends_on:
       db:
         condition: service_healthy
@@ -34,12 +36,13 @@ services:
   brain:
     build: ../../services/brain
     environment:
-      DATABASE_URL: postgresql+psycopg://chatshop:${POSTGRES_PASSWORD:-chatshop}@db:5432/chatshop
+      DATABASE_URL: postgresql+psycopg://chatshop:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/chatshop
       LLM_BASE_URL: ${LLM_BASE_URL:-}
-      LLM_MODEL: ${LLM_MODEL:-Qwen/Qwen2.5-32B-Instruct-AWQ}
+      LLM_MODEL: ${LLM_MODEL:-shop}
       LLM_API_KEY: ${LLM_API_KEY:-not-needed}
       EMBEDDINGS_BASE_URL: ${EMBEDDINGS_BASE_URL:-}
-      EMBEDDINGS_MODEL: ${EMBEDDINGS_MODEL:-BAAI/bge-m3}
+      EMBEDDINGS_MODEL: ${EMBEDDINGS_MODEL:-shop-embed}
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?set ADMIN_TOKEN}
     depends_on:
       db:
         condition: service_healthy
@@ -49,7 +52,7 @@ services:
     image: pgvector/pgvector:pg17
     environment:
       POSTGRES_USER: chatshop
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-chatshop}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
       POSTGRES_DB: chatshop
     volumes:
       - pgdata:/var/lib/postgresql/data

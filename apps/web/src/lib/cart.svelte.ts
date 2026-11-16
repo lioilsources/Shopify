@@ -41,7 +41,7 @@ class Cart {
 	}
 
 	get total() {
-		return this.items.reduce((sum, i) => sum + i.qty * i.product.price_czk, 0);
+		return this.items.reduce((sum, i) => sum + i.qty * (i.product.price_czk ?? 0), 0);
 	}
 }
 

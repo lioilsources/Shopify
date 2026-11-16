@@ -8,7 +8,11 @@
 
 	let selectedCategory = $state<string | null>(null);
 	let activeFilters = $state<ActiveFilters>({});
-	let products = $state<Product[]>(data.products);
+	// Selection set by the chat: product ids in relevance order (null = whole catalogue).
+	let chatSelection = $state<{ ids: number[]; query: string } | null>(null);
+	// Starts from the server-rendered list, then follows category, filters and chat.
+	let fetched = $state<Product[] | null>(null);
+	const products = $derived(fetched ?? data.products);
 
 	const categoryFilters = $derived(
 		selectedCategory
@@ -21,14 +25,25 @@
 		activeFilters = {};
 	}
 
-	// Refetch při každé změně kategorie nebo filtrů.
+	function onChatSelect(ids: number[], query: string) {
+		// An empty answer leaves the gallery as it is.
+		if (ids.length) chatSelection = { ids, query };
+	}
+
+	// Refetch on every change of category, filters or chat selection; filters narrow
+	// the chat selection further.
+	let requestSeq = 0;
 	$effect(() => {
 		const params = new URLSearchParams();
 		if (selectedCategory) params.set('category', selectedCategory);
 		if (Object.keys(activeFilters).length) params.set('filters', JSON.stringify(activeFilters));
+		if (chatSelection) params.set('ids', chatSelection.ids.join(','));
+		const seq = ++requestSeq;
 		fetch(`/api/products?${params}`)
 			.then((r) => r.json())
-			.then((rows: Product[]) => (products = rows));
+			.then((rows: Product[]) => {
+				if (seq === requestSeq) fetched = rows;
+			});
 	});
 </script>
 
@@ -37,7 +52,7 @@
 <div class="flex h-full flex-col">
 	<!-- ~20 % — chat asistent -->
 	<section class="h-[30dvh] min-h-44 border-b-2 border-slate-200 bg-white">
-		<Chat />
+		<Chat category={selectedCategory} onselect={onChatSelect} />
 	</section>
 
 	<!-- ~80 % — galerie s filtry -->
@@ -75,6 +90,16 @@
 		</aside>
 
 		<div class="flex-1 overflow-y-auto p-4">
+			{#if chatSelection}
+				<div class="mb-3 flex items-center gap-2 text-sm">
+					<span class="rounded-full bg-sky-100 px-3 py-1 text-sky-800">
+						Výběr z chatu: „{chatSelection.query}“
+					</span>
+					<button class="text-slate-500 underline hover:text-slate-900" onclick={() => (chatSelection = null)}>
+						Zobrazit vše
+					</button>
+				</div>
+			{/if}
 			{#if products.length === 0}
 				<p class="mt-8 text-center text-slate-400">Žádné produkty neodpovídají filtrům.</p>
 			{:else}

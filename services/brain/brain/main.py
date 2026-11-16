@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from brain import chat, ingest
+from brain import admin, chat, ingest
+from brain.search import search_mode
 from brain.config import settings
 
 app = FastAPI(title="ChatShop brain")
@@ -15,6 +16,7 @@ app.add_middleware(
 
 app.include_router(chat.router)
 app.include_router(ingest.router)
+app.include_router(admin.router)
 
 
 @app.get("/health")
@@ -23,4 +25,5 @@ def health():
         "status": "ok",
         "llm": "connected" if settings.llm_enabled else "mock",
         "embeddings": "connected" if settings.embeddings_enabled else "mock",
+        "search": search_mode(),
     }

@@ -1,7 +1,5 @@
-import { env } from '$env/dynamic/private';
+import { BRAIN_URL } from '$lib/server/brain';
 import type { RequestHandler } from './$types';
-
-const BRAIN_URL = env.BRAIN_URL ?? 'http://localhost:8000';
 
 // Proxy SSE streamu z brain služby (drží DB přístup i LLM na backendu).
 export const POST: RequestHandler = async ({ request, fetch }) => {
