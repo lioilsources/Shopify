@@ -27,7 +27,7 @@ roste zájem (viz poznámka o zdrojích dole). Fáze = kdy se profil zapíná (p
 
 | produkt | plocha | DPI | px | zvláštnosti |
 |---|---|---|---|---|
-| tričko, mikina (DTG/DTF) | 30×40 cm | 150–300 | 2 400–4 700 | PNG s alfou, bez pozadí |
+| tričko, mikina (DTG/DTF) | 30×40 až 38×46 cm | 150–300 | 2 400–5 400 | PNG s alfou, bez pozadí |
 | ★ DTF nažehlovačky / gang sheet | arch š. 56 cm, délka do 5 m | 300 | podle motivů | víc motivů na arch (nesting), alfa |
 | ★ UV DTF (obal na sklenici, tvrdé povrchy) | 24×11 cm | 300 | 2 800 | alfa, bílá podtisková |
 | celopotisk (legíny, plavky, dresy) | panely do 90 cm | 150 | 5 300 | bezešvý vzor nebo motiv na střihovou šablonu |
@@ -41,7 +41,7 @@ roste zájem (viz poznámka o zdrojích dole). Fáze = kdy se profil zapíná (p
 |---|---|---|---|---|
 | plakát A3–A0, B1 | 30×42 až 84×119 cm | 150–300 | 3 500–7 000 | spadávka 3 mm |
 | fine-art (giclée) | 50×70 cm | 300 | 8 300 | |
-| plátno na rámu | 40×60 až 100×150 cm | 100–150 | 2 400–8 900 | zrcadlený ohyb 3–5 cm |
+| plátno na rámu | 40×60 až 100×150 cm | 100–150 | 2 800–9 500 | zrcadlený ohyb 4–5,5 cm na stranu (podle hloubky rámu) |
 | ★ kov (hliník), akryl, forex, dřevo | 30×45 až 80×120 cm | 150–300 | 2 700–9 000 | |
 | ★ plechová cedule | 20×30 cm | 300 | 3 500 | retro motivy, koníčky |
 | fototapeta | 2,5–4 × 2,5 m | 72–150 | 8 500–16 000 | pruhy s přesahem |
@@ -59,7 +59,7 @@ roste zájem (viz poznámka o zdrojích dole). Fáze = kdy se profil zapíná (p
 
 | produkt | plocha | DPI | px | zvláštnosti |
 |---|---|---|---|---|
-| hrnek | 20×9 cm | 300 | 2 400 | poměr 2,2:1 |
+| hrnek | 20×9,6 cm | 300 | 2 400–2 700 | spad 2 mm nahoře a dole (Gelato); poměr 2–2,6:1 podle výrobce |
 | ★ termohrnek (tumbler, sublimace) | 23,5×21 cm | 300 | 2 800 | kónický rozvin |
 | polštář | 40–50 cm | 150–200 | 2 400–3 900 | |
 | ★ deka (sherpa, fleece) | 150×200 cm | 75–100 | 5 900–7 900 | měkký materiál, detail se ztrácí |
@@ -69,10 +69,10 @@ roste zájem (viz poznámka o zdrojích dole). Fáze = kdy se profil zapíná (p
 | obal na mobil | 9×18 cm | 300 | 2 100 | šablona s výřezem |
 | skin na notebook, konzoli | 36×25 cm | 300 | 4 300 | ořez podle šablony |
 | podložka pod myš | 25×21 cm | 200–300 | 2 000–3 000 | |
-| ★ herní podložka XXL (desk mat) | 90×40 cm | 150–200 | 5 300–7 100 | poměr 2,25:1 |
+| ★ herní podložka XXL (desk mat) | 91×46 cm | 150–300 | 5 400–10 800 | poměr 2:1 |
 | ★ playmat pro karetní hry | 61×35,5 cm | 200–300 | 4 800–7 200 | |
 | hrací a sběratelské karty | 63×88 mm + 3 mm | 300 | 1 100 | nativně; série chce jednotný styl |
-| ★ samolepky (die-cut, archy) | 5–10 cm | 300 | 600–1 200 | nativně; alfa + ořezová křivka |
+| ★ samolepky (die-cut, archy) | 5–10 cm | 300 | 600–1 200 | nativně; alfa + ořezová křivka, spad 2–3 mm |
 | placky, odznaky | 25–58 mm | 300 | 700 | smaltovaný odznak: vektor, ≤ 6 barev |
 | ★ akrylový stojánek, klíčenka | 5–15 cm | 300 | 600–1 800 | alfa, ořez, bílá podtisková, zrcadlení |
 | dakimakura | 50×150 cm | 150 | 8 900 | poměr 1:3, dvě strany |
@@ -88,9 +88,9 @@ roste zájem (viz poznámka o zdrojích dole). Fáze = kdy se profil zapíná (p
 |---|---|---|---|---|
 | citylight | 118,5×175 cm | 100–150 | 6 900–10 300 | |
 | billboard (euro, bigboard) | 5,1×2,4 až 9,6×3,6 m | 15–40 | 4 000–9 500 | návrh v měřítku 1:10 |
-| banner, plachta PVC | 3×1 m a víc | 50–72 | 5 900–8 500 | oka, svary: bezpečná zóna |
+| banner, plachta PVC | 3×1 m a víc | 50–72 | 5 900–8 500 | spad ≥ 10 mm, motiv ≥ 50 mm od kraje (oka, svary) |
 | mesh na lešení, fasádu | 10×8 m | 10–25 | 3 900–9 800 | |
-| roll-up | 85×200 cm | 100–150 | 7 900–11 800 | spodních 15 cm v kazetě |
+| roll-up | 85×200 cm | 100–150 | 7 900–11 800 | spad 5 mm + 30–50 mm dole do kazety |
 | vlajka, beachflag | 150×100, 80×300 cm | 72–100 | 4 300–11 800 | |
 | výloha, podlahová grafika | podle místa | 72–100 | — | děrovaná fólie (one-way) |
 | veletržní stěna | 3×2,3 m | 72–100 | 8 500–11 800 | dělení na panely |
@@ -211,6 +211,12 @@ s opatrným stropem 4× a známka ⬆ nese poznámku „orientačně“.
 
 - Rozměry a DPI: běžná praxe tisku, sepsáno z hlavy 16. 11. 2026, **neověřeno
   u výrobců**. Ověření je krok fáze 0 (plán 02, §11, `docs/FULFILMENT.md`).
+- Opraveno 16. 11. 2026 podle specifikací výrobců a partnerů (detail a odkazy
+  v [docs/FULFILMENT.md](../docs/FULFILMENT.md), §7): tričko (Printful 12×16″,
+  nově 15×18″), plátno (Gelato ohyb 34/40 mm + 15 mm, Prodigi 40 mm), hrnek
+  (Gelato 200×96 mm + spad 2 mm), desk mat (Printful 36×18″, 300 DPI), banner,
+  roll-up a samolepky (tiskárna Tiskni rychle). Ostatní řádky zůstávají
+  neověřený odhad.
 - Hvězdičky: průzkum webu 16. 11. 2026 našel jen texty prodejců a POD platforem
   (Gelato, Printify, Customily, prodejci DTF), žádná nezávislá čísla. Shodují se
   na prémiových a personalizovaných produktech (termohrnky, deky, kov a akryl,
