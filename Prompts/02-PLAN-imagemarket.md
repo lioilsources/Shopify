@@ -19,7 +19,7 @@ Přílohy: [03-USE-CASES.md](03-USE-CASES.md) (produkty a tiskové profily),
 
 | fáze | stav | poznámka |
 |---|---|---|
-| 0 rešerše a rozhodnutí | nezačato | čeká na odpovědi R2–R13 (§4); R1 je rozhodnuté |
+| 0 rešerše a rozhodnutí | hotovo 16. 11. 2026 | `docs/DECISIONS.md`, `REUSE.md`, `GALLERY_API.md`, `LICENCES.md`, `FULFILMENT.md`, `CONTENT_POLICY.md`, `CLAUDE.md` |
 | S showcase (souběžně) | — | plán 04; začíná srovnáním schnell × dev × Qwen; potřebuje okna GPU přes broker |
 | T tiskový bench (souběžně) | — | potřebuje okno ComfyUI přes broker |
 | 1 katalog a výloha | — | |
@@ -419,3 +419,29 @@ Hobby sady, školní sady (pexeso, kartičky), 3D figurka, stickery, další jaz
   Qwen-Image-Edit (jiný model než Qwen-Image), FLUX.2 klein, Z-Image a SDXL
   checkpointy ověří `docs/LICENCES.md`.
 - **Právní body v §12:** orientační, ne právní rada.
+
+## Aktualizace
+
+### 16. 11. 2026 — po fázi 0
+
+- **R9:** veřejný název je **SlopMarket**; „ImageMarket“ zůstává jako název
+  projektu v plánech.
+- **R10: bez lidí ve v1.** Ve fázi 3b odpadá zachování tváře a souhlas se
+  zpracováním tváře; nahrání má detektor lidské tváře jako bránu (fotka
+  s tváří se odmítne). Lidi až po vyřešení licence InsightFace (R7).
+- **R6:** kandidáti na partnera velkého formátu jsou v `docs/FULFILMENT.md`.
+- **R5:** rešerše doporučuje Gelato na výrobu (tisk v ČR) a Prodigi jako první
+  integraci (jediný se sandboxem); rozhodne zkušební objednávka.
+- **ChatShop je dál od plánu, než §2 předpokládal** (`docs/REUSE.md`): chat
+  dnes galerii nemění (karty jen v bublině), filtry bez kategorie nejsou,
+  `price_czk` je povinné, admin a ingest jsou bez autentizace, `embed()` nemá
+  cestu bez SPARKu. Fáze 1, krok 1 to musí dohnat dřív než adaptér ingestu.
+- **Galerie** (`docs/GALLERY_API.md`): taxonomie v produkci neběží, takže
+  `band`, `view=shared` a `/similar` dnes nefungují; linii nejde ověřit.
+  Fáze 1, krok 2 závisí na PR 1, 4 a 6 ve FineTuneGallery a na zapnutí
+  taxonomie.
+- **Licence** (`docs/LICENCES.md`): kromě schnell a Qwen-Image jsou čisté
+  i Qwen-Image-Edit, FLUX.2 klein 4B (ne 9B) a Z-Image-Turbo. Na zvětšení
+  nepoužívat 4x-UltraSharp, na odstranění pozadí ne RMBG; BiRefNet a SeedVR2
+  ano.
+
