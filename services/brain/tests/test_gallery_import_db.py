@@ -15,7 +15,17 @@ pytestmark = pytest.mark.db
 
 ADMIN = {"X-Admin-Token": "test-admin-token"}
 
-IMG_OK = b"\x89PNG fake fox"
+def _png_bytes(color):
+    import io
+
+    from PIL import Image
+
+    buf = io.BytesIO()
+    Image.new("RGB", (300, 200), color).save(buf, "PNG")
+    return buf.getvalue()
+
+
+IMG_OK = _png_bytes((200, 120, 40))
 IMG_DEV = b"\x89PNG fake flux dev"
 SHA_OK = hashlib.sha256(IMG_OK).hexdigest()
 SHA_DEV = hashlib.sha256(IMG_DEV).hexdigest()
@@ -220,3 +230,19 @@ def test_import_grades_fitness_and_feeds_suits_filter(client, db, fake, storage)
     db.refresh(suits)
     assert "Plakát" in suits.config["values"]
     assert any(p["id"] == "poster" for p in client.get("/profiles").json())
+
+
+def test_public_preview_only_for_listed(client, db, fake, storage, monkeypatch):
+    from brain import public
+
+    monkeypatch.setattr(public, "LocalStorage", lambda: storage)
+    fake.pages[None] = [[_item()]]
+    run_import(db, fake.client(), storage)
+    product = db.query(Product).one()
+    assert product.image_url == f"/media/preview/{SHA_OK}.jpg"
+    assert client.get(product.image_url).status_code == 404  # draft
+    client.post("/admin/products/status", json={"ids": [product.id], "status": "listed"}, headers=ADMIN)
+    res = client.get(product.image_url)
+    assert res.status_code == 200 and res.headers["content-type"] == "image/jpeg"
+    assert res.content[:2] == b"\xff\xd8"
+    assert client.get("/media/preview/" + "0" * 64 + ".jpg").status_code == 404

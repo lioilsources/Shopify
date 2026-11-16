@@ -1,11 +1,17 @@
 """Public read endpoints for listed products (no admin token)."""
 
-from fastapi import APIRouter, Depends, HTTPException
+import re
+
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from brain.db import get_session
 from brain.models import STATUS_LISTED, PrintProfile, Product, ProductFitness
+from brain.previews import ensure_preview
+from brain.storage import LocalStorage, StorageError
+
+_SHA = re.compile(r"^[0-9a-f]{64}$")
 
 router = APIRouter()
 
@@ -47,3 +53,20 @@ def product_fitness(product_id: int, session: Session = Depends(get_session)):
     ]
     items.sort(key=lambda r: (GRADE_ORDER[r["grade"]], r["label_cs"]))
     return {"product_id": product_id, "items": items}
+
+
+@router.get("/media/preview/{sha256}.jpg")
+def preview(sha256: str, session: Session = Depends(get_session)):
+    """Watermarked preview, only for images of listed products."""
+    if not _SHA.match(sha256):
+        raise HTTPException(404, "Náhled nenalezen")
+    listed = session.scalar(
+        select(Product.id).where(Product.image_sha256 == sha256, Product.status == STATUS_LISTED).limit(1)
+    )
+    if listed is None:
+        raise HTTPException(404, "Náhled nenalezen")
+    try:
+        data = ensure_preview(LocalStorage(), sha256)
+    except StorageError as exc:
+        raise HTTPException(404, "Náhled nenalezen") from exc
+    return Response(data, media_type="image/jpeg", headers={"Cache-Control": "public, max-age=86400"})

@@ -3,10 +3,12 @@
 	import Filters from '$lib/components/Filters.svelte';
 	import ProductCard from '$lib/components/ProductCard.svelte';
 	import type { ActiveFilters, Product } from '$lib/types';
+	import { page } from '$app/state';
 
 	let { data } = $props();
 
-	let selectedCategory = $state<string | null>(null);
+	// ?category=<slug> opens the gallery on one theme (links from the product detail).
+	let selectedCategory = $state<string | null>(page.url.searchParams.get('category'));
 	let activeFilters = $state<ActiveFilters>({});
 	// Selection set by the chat: product ids in relevance order (null = whole catalogue).
 	let chatSelection = $state<{ ids: number[]; query: string } | null>(null);
