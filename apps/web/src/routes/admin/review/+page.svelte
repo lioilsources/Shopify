@@ -16,6 +16,28 @@
 	let selected = $state<Set<number>>(new Set());
 	let error = $state<string | null>(null);
 	let busy = $state(false);
+	let importNote = $state<string | null>(null);
+
+	async function importGallery() {
+		busy = true;
+		importNote = null;
+		error = null;
+		try {
+			const res = await fetch('/api/admin/import/gallery', { method: 'POST' });
+			const body = await res.json();
+			if (!res.ok) throw new Error(body.detail ?? res.statusText);
+			importNote = `Nové ${body.created}, aktualizované ${body.updated}, skryté ${body.hidden}, přeskočené ${body.skipped}, bez originálu ${body.missing_original}.`;
+			await load();
+		} catch (err) {
+			error = String(err);
+		} finally {
+			busy = false;
+		}
+	}
+
+	const imageSrc = (p: AdminProduct) =>
+		p.image_url || (p.image_sha256 ? `/api/admin/media/${p.image_sha256}` : '');
+	const isBlocked = (p: AdminProduct) => p.gate_reasons.some((r) => r.blocking);
 
 	async function load() {
 		error = null;
@@ -86,7 +108,14 @@
 				{label} ({counts[key as ProductStatus]})
 			</button>
 		{/each}
+		<button
+			class="ml-auto rounded border border-slate-300 px-3 py-1 text-sm disabled:opacity-40"
+			disabled={busy}
+			onclick={importGallery}>Načíst z galerie</button
+		>
 	</div>
+
+	{#if importNote}<p class="rounded bg-emerald-50 p-3 text-sm text-emerald-800">{importNote}</p>{/if}
 
 	<p class="text-sm text-slate-500">
 		Nic není veřejné, dokud to tady někdo neschválí. Filtry kategorie rostou až ze schválených položek.
@@ -129,15 +158,20 @@
 			{#each items as p (p.id)}
 				<button
 					class={'overflow-hidden rounded-lg border-2 bg-white text-left ' +
-						(selected.has(p.id) ? 'border-emerald-500' : 'border-slate-200')}
+						(selected.has(p.id) ? 'border-emerald-500' : isBlocked(p) ? 'border-red-200' : 'border-slate-200')}
 					onclick={() => toggle(p.id)}
 				>
-					{#if p.image_url}
-						<img src={p.image_url} alt={p.name} class="w-full object-contain" loading="lazy" />
+					{#if imageSrc(p)}
+						<img src={imageSrc(p)} alt={p.name} class="w-full object-contain" loading="lazy" />
 					{/if}
 					<div class="space-y-0.5 p-2">
 						<p class="line-clamp-2 text-xs font-medium">{p.name}</p>
 						<p class="text-xs text-slate-400">{p.category_slug} · #{p.id}</p>
+						{#each p.gate_reasons as r (r.code)}
+							<p class={'text-xs ' + (r.blocking ? 'text-red-600' : 'text-amber-600')}>
+								{r.blocking ? '⛔' : '⚠'} {r.detail}
+							</p>
+						{/each}
 					</div>
 				</button>
 			{/each}

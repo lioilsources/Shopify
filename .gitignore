@@ -22,3 +22,6 @@ __pycache__/
 
 # Docker
 infra/pgdata/
+
+# Runtime data (media, import state, logs)
+run/

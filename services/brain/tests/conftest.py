@@ -48,7 +48,7 @@ def db(migrated):
 
     with engine.begin() as conn:
         conn.execute(
-            text("TRUNCATE product_embeddings, products, filter_schemas, categories RESTART IDENTITY CASCADE")
+            text("TRUNCATE import_state, product_embeddings, products, filter_schemas, categories RESTART IDENTITY CASCADE")
         )
     with SessionLocal() as session:
         yield session

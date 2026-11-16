@@ -31,6 +31,21 @@ class Settings(BaseSettings):
     # Shared secret for /ingest and /admin/*; held only by the web BFF on the server.
     admin_token: str = ""
 
+    # FineTuneGallery export (plan 05): read-only token, own CF Access service token.
+    gallery_url: str = ""
+    gallery_collection: str = "shop"
+    gallery_export_token: str = ""
+    gallery_cf_client_id: str = ""
+    gallery_cf_client_secret: str = ""
+    gallery_timeout: float = 30.0
+
+    # Private originals copied from the gallery (plan 05, K3); gitignored run/ by default.
+    media_dir: Path = _REPO_ROOT / "run" / "media"
+
+    @property
+    def gallery_enabled(self) -> bool:
+        return bool(self.gallery_url and self.gallery_export_token)
+
     @property
     def llm_enabled(self) -> bool:
         return bool(self.llm_base_url)
