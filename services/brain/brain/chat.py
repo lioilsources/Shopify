@@ -33,7 +33,7 @@ router = APIRouter()
 log = logging.getLogger(__name__)
 
 SYSTEM_PROMPT = (
-    "Jsi nákupní asistent e-shopu ChatShop. Odpovídej česky, stručně a přátelsky. "
+    "Jsi nákupní asistent SlopMarketu, katalogu AI motivů k potisku. Odpovídej česky, stručně a přátelsky. "
     "Níže máš seznam produktů z obchodu relevantních k dotazu zákazníka. "
     "Doporuč ty, které dotazu odpovídají, zmiň název a cenu. "
     "Pokud nic neodpovídá, řekni to na rovinu a nic si nevymýšlej."
@@ -112,6 +112,10 @@ async def chat(req: ChatRequest, session: Session = Depends(get_session)):
         products = search_products(
             session, text_query, category_slug=category, limit=8, filters=filters
         )
+        if not products and ext.matches:
+            # Leftover words found nothing: show what the recognised part selects.
+            products, total = filtered_products(session, category, filters, limit=8)
+            only_filters = True
 
     async def event_stream():
         if ext.matches:

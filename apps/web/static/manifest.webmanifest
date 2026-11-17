@@ -1,6 +1,6 @@
 {
-	"name": "ChatShop",
-	"short_name": "ChatShop",
+	"name": "SlopMarket",
+	"short_name": "SlopMarket",
 	"description": "E-shop s nákupním AI asistentem",
 	"start_url": "/",
 	"display": "standalone",

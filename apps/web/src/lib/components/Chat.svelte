@@ -4,7 +4,8 @@
 	let {
 		category = null,
 		onselect,
-		onfilters
+		onfilters,
+		onquery
 	}: {
 		/** Category selected in the gallery; scopes the chat search. */
 		category?: string | null;
@@ -12,6 +13,8 @@
 		onselect: (ids: number[], query: string) => void;
 		/** Filters recognised in the query ("na hrnek" -> Hodí se na: Hrnek). */
 		onfilters: (found: ChatFilters, query: string) => void;
+		/** Called when a new question is sent, before the request. */
+		onquery?: () => void;
 	} = $props();
 
 	let messages = $state<ChatMsg[]>([]);
@@ -25,8 +28,11 @@
 
 	async function send(e: SubmitEvent) {
 		e.preventDefault();
-		const question = input.trim();
+		// Read the field itself too: automation can fill it without an input event.
+		const field = (e.currentTarget as HTMLFormElement).elements.namedItem('q') as HTMLInputElement | null;
+		const question = (input || field?.value || '').trim();
 		if (!question || busy) return;
+		onquery?.();
 		input = '';
 		busy = true;
 		messages.push({ role: 'user', content: question });
@@ -121,13 +127,15 @@
 	<form onsubmit={send} class="flex gap-2 border-t border-slate-200 p-3">
 		<input
 			bind:value={input}
+			name="q"
+			enterkeyhint="search"
 			disabled={busy}
 			placeholder="Napište, co hledáte…"
 			class="flex-1 rounded-full border border-slate-300 px-4 py-2 text-sm focus:border-sky-500 focus:outline-none"
 		/>
 		<button
 			type="submit"
-			disabled={busy || !input.trim()}
+			disabled={busy}
 			class="rounded-full bg-sky-600 px-5 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:opacity-40"
 		>
 			Odeslat
