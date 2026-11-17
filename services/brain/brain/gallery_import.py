@@ -43,7 +43,8 @@ class ImportStats:
 
 
 def source_key(item: dict[str, Any]) -> str:
-    return f"gallery:{item['imageId']}"
+    # Other sources (demo batches) bring their own key.
+    return item.get("sourceKey") or f"gallery:{item['imageId']}"
 
 
 def _orientation(w: int, h: int) -> str:

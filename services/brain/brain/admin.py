@@ -32,6 +32,7 @@ def _row(p: Product) -> dict[str, Any]:
         "status": p.status,
         "source_key": p.source_key,
         "image_sha256": p.image_sha256,
+        "demo": p.demo,
         "gate_reasons": p.gate_reasons or [],
         "created_at": p.created_at.isoformat() if p.created_at else None,
         "reviewed_at": p.reviewed_at.isoformat() if p.reviewed_at else None,

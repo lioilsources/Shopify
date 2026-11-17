@@ -49,6 +49,11 @@
 					{product.category_name}
 				</a>
 				<h1 class="mt-1 text-2xl font-bold leading-tight">{product.name}</h1>
+				{#if product.demo}
+					<p class="mt-2 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
+						Demo ukázka katalogu. Tenhle obrázek zatím není v prodeji.
+					</p>
+				{/if}
 				{#if product.description && product.description !== product.name}
 					<p class="mt-2 text-slate-600">{product.description}</p>
 				{/if}

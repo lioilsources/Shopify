@@ -117,9 +117,11 @@ def test_import_creates_drafts_with_gate_reasons(db, fake, storage):
 
     # every request carries the export token
     assert all(r.headers.get("authorization", "").startswith("Bearer") for r in fake.requests)
-    # all six themes exist with base filters
-    assert db.query(Category).count() == 6
-    assert db.query(FilterSchema).filter_by(attr_key="styl").count() == 6
+    # every theme exists with base filters
+    from brain.themes import THEMES
+
+    assert db.query(Category).count() == len(THEMES)
+    assert db.query(FilterSchema).filter_by(attr_key="styl").count() == len(THEMES)
 
 
 def test_import_is_incremental_and_idempotent(db, fake, storage):

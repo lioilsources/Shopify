@@ -6,7 +6,12 @@
 </script>
 
 <article class="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-	<a href={`/p/${product.id}`} class="block">
+	<a href={`/p/${product.id}`} class="relative block">
+		{#if product.demo}
+			<span class="absolute top-2 left-2 rounded-full bg-amber-400 px-2 py-0.5 text-xs font-semibold text-amber-950">
+				Demo
+			</span>
+		{/if}
 		<img src={product.image_url} alt={product.name} class="aspect-square w-full object-cover" loading="lazy" />
 	</a>
 	<div class="flex flex-1 flex-col gap-1 p-3">

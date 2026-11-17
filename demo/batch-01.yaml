@@ -1,0 +1,454 @@
+batch: demo-01
+note: 'Demo katalog SlopMarketu. Licence: jen modely z docs/LICENCES.md (FLUX.1-schnell, Qwen-Image, Z-Image-Turbo, FLUX.2-klein-4B).'
+output: <id>.png + manifest.json [{id, file, model, seed, width, height, steps}]
+items:
+- id: animals-01
+  theme: animals
+  style: akvarel
+  subject: liška
+  name: Liška v zasněženém lese
+  prompt: watercolor painting of a red fox in a snowy birch forest, soft wet-on-wet washes, white paper texture
+  width: 1024
+  height: 1536
+  seed: 1845063987
+- id: animals-02
+  theme: animals
+  style: linoryt
+  subject: sova
+  name: Sova na větvi
+  prompt: linocut print of a barn owl on a branch, bold black carved lines, cream paper, two colors
+  width: 1024
+  height: 1536
+  seed: 312773242
+- id: animals-03
+  theme: animals
+  style: fotorealistický
+  subject: vydra
+  name: Vydra v řece
+  prompt: photorealistic close-up of a river otter floating on its back, golden hour, shallow depth of field
+  width: 1536
+  height: 864
+  seed: 52403392
+- id: animals-04
+  theme: animals
+  style: art deco
+  subject: jelen
+  name: Jelen art deco
+  prompt: art deco poster of a stag with geometric antlers, gold and teal, symmetrical composition
+  width: 1024
+  height: 1536
+  seed: 2086471857
+- id: animals-05
+  theme: animals
+  style: anime
+  subject: panda
+  name: Panda v bambusu
+  prompt: anime style illustration of a red panda in a bamboo grove, soft cel shading, pastel colors
+  width: 1024
+  height: 1024
+  seed: 503089860
+- id: animals-06
+  theme: animals
+  style: akvarel
+  subject: liška
+  name: Liška v zasněženém lese
+  prompt: watercolor painting of a red fox in a snowy birch forest, soft wet-on-wet washes, white paper texture
+  width: 1024
+  height: 1536
+  seed: 434435885
+- id: dinosaurs-01
+  theme: dinosaurs
+  style: retro plakát
+  subject: tyranosaurus
+  name: T-rex na retro plakátu
+  prompt: 1950s retro travel poster of a tyrannosaurus in a volcanic valley, limited palette, grain
+  width: 1024
+  height: 1536
+  seed: 461717830
+- id: dinosaurs-02
+  theme: dinosaurs
+  style: komiks
+  subject: triceratops
+  name: Triceratops v akci
+  prompt: comic book panel of a triceratops charging, halftone dots, bold ink outlines
+  width: 1024
+  height: 1024
+  seed: 737533627
+- id: dinosaurs-03
+  theme: dinosaurs
+  style: vědecká ilustrace
+  subject: stegosaurus
+  name: Stegosaurus
+  prompt: vintage scientific illustration of a stegosaurus, side view, labeled plate style without text, sepia
+  width: 1536
+  height: 864
+  seed: 645830383
+- id: dinosaurs-04
+  theme: dinosaurs
+  style: pixel art
+  subject: brontosaurus
+  name: Brontosaurus v pixelech
+  prompt: pixel art of a brontosaurus by a lake at sunset, 32-bit palette, crisp pixels
+  width: 1536
+  height: 864
+  seed: 464927190
+- id: dinosaurs-05
+  theme: dinosaurs
+  style: akvarel
+  subject: pterodaktyl
+  name: Pterodaktylové nad mořem
+  prompt: loose watercolor of pterodactyls flying over a misty sea cliff
+  width: 1536
+  height: 864
+  seed: 740236594
+- id: machines-01
+  theme: machines
+  style: technický výkres
+  subject: lokomotiva
+  name: Parní lokomotiva
+  prompt: blueprint technical drawing of a steam locomotive, white lines on blue, precise
+  width: 1536
+  height: 864
+  seed: 998657287
+- id: machines-02
+  theme: machines
+  style: fotorealistický
+  subject: traktor
+  name: Starý traktor na poli
+  prompt: photorealistic vintage red tractor in a wheat field at dusk
+  width: 1536
+  height: 864
+  seed: 130540328
+- id: machines-03
+  theme: machines
+  style: retro plakát
+  subject: letadlo
+  name: Dvouplošník
+  prompt: retro aviation poster of a biplane over mountains, art deco typography-free
+  width: 1024
+  height: 1536
+  seed: 23228634
+- id: machines-04
+  theme: machines
+  style: pixel art
+  subject: raketa
+  name: Raketa v pixelech
+  prompt: pixel art rocket launching into a starry sky, 16-bit style
+  width: 1024
+  height: 1536
+  seed: 1914418163
+- id: machines-05
+  theme: machines
+  style: olejomalba
+  subject: plachetnice
+  name: Plachetnice v bouři
+  prompt: oil painting of a tall ship in a storm, dramatic light, impasto brushstrokes
+  width: 1536
+  height: 864
+  seed: 1600291825
+- id: plush-01
+  theme: plush
+  style: plyšák
+  subject: medvídek
+  name: Plyšový medvídek
+  prompt: a handmade plush teddy bear sitting on a wooden shelf, felt and fuzzy fabric, visible stitching, studio photo
+  width: 1024
+  height: 1024
+  seed: 759366337
+- id: plush-02
+  theme: plush
+  style: plyšák
+  subject: dinosaurus
+  name: Plyšový dinosaurus
+  prompt: a cute plush green dinosaur toy, soft minky fabric, stitched seams, white background product photo
+  width: 1024
+  height: 1024
+  seed: 629866680
+- id: plush-03
+  theme: plush
+  style: plyšák
+  subject: liška
+  name: Plyšová liška
+  prompt: a plush fox toy with a fluffy tail, orange felt, button eyes, cozy bedroom background
+  width: 1024
+  height: 1024
+  seed: 610889967
+- id: plush-04
+  theme: plush
+  style: plyšák
+  subject: chobotnice
+  name: Plyšová chobotnice
+  prompt: a plush purple octopus toy, knitted texture, on a bed of pillows, soft light
+  width: 1024
+  height: 1024
+  seed: 1034220573
+- id: plush-05
+  theme: plush
+  style: plyšák
+  subject: kočka
+  name: Plyšová kočka
+  prompt: a plush tabby cat toy, embroidered face, sitting on a window sill
+  width: 1024
+  height: 1024
+  seed: 1517791866
+- id: plush-06
+  theme: plush
+  style: plyšák
+  subject: drak
+  name: Plyšový drak
+  prompt: a plush red dragon toy with felt wings, white background product photo
+  width: 1024
+  height: 1024
+  seed: 254170664
+- id: plush-07
+  theme: plush
+  style: plyšák
+  subject: tučňák
+  name: Plyšový tučňák
+  prompt: a crocheted amigurumi penguin toy, wool texture, pastel background
+  width: 1024
+  height: 1024
+  seed: 1979358100
+- id: plush-08
+  theme: plush
+  style: plyšák
+  subject: pes
+  name: Plyšový jezevčík
+  prompt: a long plush dachshund toy, corduroy fabric, lying on a rug
+  width: 1024
+  height: 1024
+  seed: 1093822989
+- id: landscapes-01
+  theme: landscapes
+  style: olejomalba
+  subject: hory
+  name: Alpské jezero
+  prompt: oil painting of an alpine lake with mountains at dawn, impressionist brushwork
+  width: 1536
+  height: 864
+  seed: 1576964104
+- id: landscapes-02
+  theme: landscapes
+  style: fotorealistický
+  subject: poušť
+  name: Duny za soumraku
+  prompt: photorealistic sand dunes at sunset, long shadows, wide landscape
+  width: 1536
+  height: 864
+  seed: 856914997
+- id: landscapes-03
+  theme: landscapes
+  style: akvarel
+  subject: les
+  name: Mlžný les
+  prompt: watercolor misty pine forest, layered blue-green washes
+  width: 1024
+  height: 1536
+  seed: 1011381551
+- id: landscapes-04
+  theme: landscapes
+  style: japonský dřevořez
+  subject: vlna
+  name: Velká vlna u pobřeží
+  prompt: ukiyo-e woodblock print style of a big wave near a rocky coast, indigo and cream
+  width: 1536
+  height: 864
+  seed: 370353765
+- id: landscapes-05
+  theme: landscapes
+  style: retro plakát
+  subject: pole
+  name: Levandulová pole
+  prompt: retro poster of lavender fields in Provence, flat shapes, warm sun
+  width: 1024
+  height: 1536
+  seed: 276075939
+- id: landscapes-06
+  theme: landscapes
+  style: fotorealistický
+  subject: polární záře
+  name: Polární záře nad fjordem
+  prompt: photorealistic aurora over a Norwegian fjord, reflections in still water
+  width: 1536
+  height: 864
+  seed: 647983113
+- id: pets-01
+  theme: pets
+  style: olejomalba
+  subject: pes
+  name: Portrét bígla
+  prompt: classical oil portrait of a beagle wearing a ruffled collar, dark background, Rembrandt lighting
+  width: 1024
+  height: 1536
+  seed: 1410566885
+- id: pets-02
+  theme: pets
+  style: anime
+  subject: kočka
+  name: Kočka na okně
+  prompt: anime style cat sleeping on a sunny window sill, plants, soft colors
+  width: 1024
+  height: 1024
+  seed: 1426872914
+- id: pets-03
+  theme: pets
+  style: pop art
+  subject: pes
+  name: Pop art buldoček
+  prompt: pop art four-panel portrait of a french bulldog, bright contrasting colors
+  width: 1024
+  height: 1024
+  seed: 1155589776
+- id: pets-04
+  theme: pets
+  style: akvarel
+  subject: kočka
+  name: Zrzavá kočka
+  prompt: watercolor ginger cat curled up, loose splashes
+  width: 1024
+  height: 1024
+  seed: 1258161869
+- id: pets-05
+  theme: pets
+  style: fotorealistický
+  subject: pes
+  name: Border kolie v trávě
+  prompt: photorealistic border collie running in a meadow, motion, backlit
+  width: 1536
+  height: 864
+  seed: 1916448805
+- id: pets-06
+  theme: pets
+  style: linoryt
+  subject: kočka
+  name: Černá kočka
+  prompt: linocut black cat with moon, two-color print
+  width: 1024
+  height: 1536
+  seed: 2058194022
+- id: prints-01
+  theme: prints
+  style: vektorová grafika
+  subject: liška
+  name: 'Potisk: geometrická liška'
+  prompt: flat vector t-shirt graphic of a geometric fox head, isolated on plain white background, bold shapes, 4 colors
+  width: 1024
+  height: 1024
+  seed: 2090833006
+- id: prints-02
+  theme: prints
+  style: retro
+  subject: horská krajina
+  name: 'Potisk: retro hory'
+  prompt: retro 70s sunset mountains badge t-shirt graphic, isolated on white, distressed texture, no text
+  width: 1024
+  height: 1024
+  seed: 1163836853
+- id: prints-03
+  theme: prints
+  style: tetovací
+  subject: had
+  name: 'Potisk: had a růže'
+  prompt: traditional tattoo flash snake and rose t-shirt graphic, isolated on white, bold outlines
+  width: 1024
+  height: 1024
+  seed: 1956164257
+- id: prints-04
+  theme: prints
+  style: vektorová grafika
+  subject: astronaut
+  name: 'Potisk: astronaut kočka'
+  prompt: cute cat astronaut floating t-shirt graphic, isolated on white, flat vector
+  width: 1024
+  height: 1024
+  seed: 289561435
+- id: prints-05
+  theme: prints
+  style: linoryt
+  subject: velryba
+  name: 'Potisk: velryba'
+  prompt: linocut style whale t-shirt print, isolated on white, single color navy
+  width: 1024
+  height: 1024
+  seed: 1309204242
+- id: prints-06
+  theme: prints
+  style: pixel art
+  subject: houba
+  name: 'Potisk: houba'
+  prompt: pixel art mushroom t-shirt graphic, isolated on white, 16-bit
+  width: 1024
+  height: 1024
+  seed: 505125154
+- id: prints-07
+  theme: prints
+  style: akvarel
+  subject: kolibřík
+  name: 'Potisk: kolibřík'
+  prompt: watercolor hummingbird t-shirt graphic, isolated on white, vivid splashes
+  width: 1024
+  height: 1024
+  seed: 1963154967
+- id: prints-08
+  theme: prints
+  style: komiks
+  subject: dinosaurus
+  name: 'Potisk: dino skateboardista'
+  prompt: comic style dinosaur riding a skateboard t-shirt graphic, isolated on white, no text
+  width: 1024
+  height: 1024
+  seed: 1790881829
+- id: patterns-01
+  theme: patterns
+  style: botanický
+  subject: listy
+  name: 'Vzor: monstera'
+  prompt: seamless repeating wallpaper pattern of monstera and palm leaves, deep green on cream
+  width: 1536
+  height: 1024
+  seed: 1198282768
+- id: patterns-02
+  theme: patterns
+  style: art deco
+  subject: geometrie
+  name: 'Vzor: art deco vějíře'
+  prompt: seamless art deco fan pattern, gold lines on black
+  width: 1536
+  height: 1024
+  seed: 355183767
+- id: patterns-03
+  theme: patterns
+  style: dětský
+  subject: zvířátka
+  name: 'Vzor: dětská zvířátka'
+  prompt: seamless nursery wallpaper pattern with tiny bears, stars and clouds, pastel
+  width: 1536
+  height: 1024
+  seed: 1251580118
+- id: patterns-04
+  theme: patterns
+  style: william morris
+  subject: ptáci
+  name: 'Vzor: ptáci a jahody'
+  prompt: seamless william morris style pattern with birds and strawberries, rich colors
+  width: 1536
+  height: 1024
+  seed: 1333266308
+- id: patterns-05
+  theme: patterns
+  style: japonský
+  subject: vlny
+  name: 'Vzor: seigaiha vlny'
+  prompt: seamless japanese seigaiha wave pattern, indigo
+  width: 1536
+  height: 1024
+  seed: 1479535095
+- id: patterns-06
+  theme: patterns
+  style: akvarel
+  subject: květiny
+  name: 'Vzor: akvarelové květy'
+  prompt: seamless watercolor floral wallpaper pattern, peonies on white
+  width: 1536
+  height: 1024
+  seed: 1509633777

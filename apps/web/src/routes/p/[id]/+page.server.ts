@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 
 	const [product] = await sql<ProductDetail[]>`
 		SELECT p.id, c.slug AS category_slug, c.name AS category_name, p.name, p.description,
-			p.price_czk::float AS price_czk, p.image_url, p.attributes
+			p.price_czk::float AS price_czk, p.image_url, p.attributes, p.demo
 		FROM products p JOIN categories c ON c.id = p.category_id
 		WHERE p.id = ${id} AND p.status = 'listed'
 	`;

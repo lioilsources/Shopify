@@ -16,6 +16,9 @@ THEMES: dict[str, tuple[str, str]] = {
     "plush": ("plysaci", "Plyšáci a hračky"),
     "landscapes": ("krajiny", "Krajiny a příroda"),
     "pets": ("psi-a-kocky", "Psi a kočky"),
+    # Use-case themes (demo batch, plan 03): graphics for prints, seamless patterns.
+    "prints": ("potisky", "Potisky na trička"),
+    "patterns": ("vzory", "Vzory a tapety"),
 }
 
 # Filters every image theme starts with; values grow from listed products.
