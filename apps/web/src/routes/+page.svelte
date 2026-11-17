@@ -2,7 +2,7 @@
 	import Chat from '$lib/components/Chat.svelte';
 	import Filters from '$lib/components/Filters.svelte';
 	import ProductCard from '$lib/components/ProductCard.svelte';
-	import type { ActiveFilters, Product } from '$lib/types';
+	import type { ActiveFilters, ChatFilters, Product } from '$lib/types';
 	import { page } from '$app/state';
 
 	let { data } = $props();
@@ -26,6 +26,16 @@
 		selectedCategory = slug;
 		activeFilters = {};
 	}
+
+	function onChatFilters(found: ChatFilters, query: string) {
+		// Filters from the chat replace the current ones; a query of filters only
+		// shows every match instead of the chat's top results.
+		activeFilters = { ...found.filters };
+		chatSelection = found.only ? null : chatSelection;
+		chatFilterQuery = query;
+	}
+
+	let chatFilterQuery = $state<string | null>(null);
 
 	function onChatSelect(ids: number[], query: string) {
 		// An empty answer leaves the gallery as it is.
@@ -54,7 +64,7 @@
 <div class="flex h-full flex-col">
 	<!-- ~20 % — chat asistent -->
 	<section class="h-[30dvh] min-h-44 border-b-2 border-slate-200 bg-white">
-		<Chat category={selectedCategory} onselect={onChatSelect} />
+		<Chat category={selectedCategory} onselect={onChatSelect} onfilters={onChatFilters} />
 	</section>
 
 	<!-- ~80 % — galerie s filtry -->

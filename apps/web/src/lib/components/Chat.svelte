@@ -1,14 +1,17 @@
 <script lang="ts">
-	import type { ChatMsg, ProductCard } from '$lib/types';
+	import type { ChatFilters, ChatMsg, ProductCard } from '$lib/types';
 
 	let {
 		category = null,
-		onselect
+		onselect,
+		onfilters
 	}: {
 		/** Category selected in the gallery; scopes the chat search. */
 		category?: string | null;
 		/** Chat results become the gallery selection (ids in relevance order). */
 		onselect: (ids: number[], query: string) => void;
+		/** Filters recognised in the query ("na hrnek" -> Hodí se na: Hrnek). */
+		onfilters: (found: ChatFilters, query: string) => void;
 	} = $props();
 
 	let messages = $state<ChatMsg[]>([]);
@@ -60,9 +63,14 @@
 					if (!event || !dataRaw) continue;
 					const data = JSON.parse(dataRaw);
 					if (event === 'token') assistant.content += data.text;
-					else if (event === 'products') {
+					else if (event === 'filters') {
+						assistant.filters = data as ChatFilters;
+						onfilters(assistant.filters, question);
+					} else if (event === 'products') {
 						assistant.products = data as ProductCard[];
-						onselect(assistant.products.map((p) => p.id), question);
+						// Filters only: the gallery shows every match, not the top few.
+						if (!assistant.filters?.only)
+							onselect(assistant.products.map((p) => p.id), question);
 					}
 					scrollDown();
 				}
@@ -80,7 +88,7 @@
 	<div bind:this={scroller} class="flex-1 space-y-3 overflow-y-auto px-4 py-3">
 		{#if messages.length === 0}
 			<p class="text-sm text-slate-400">
-				Zeptejte se na cokoliv ze sortimentu — např. „hledám boty na běhání do 3000 Kč".
+				Zeptejte se na cokoliv ze sortimentu — např. „liška akvarelem na hrnek“ nebo „krajina na výšku“.
 			</p>
 		{/if}
 		{#each messages as msg}
@@ -91,7 +99,16 @@
 				>
 					{msg.content || (busy ? '…' : '')}
 				</span>
-				{#if msg.role === 'assistant' && msg.products}
+				{#if msg.role === 'assistant' && msg.filters}
+					<div class="mt-1 flex flex-wrap gap-1">
+						{#each msg.filters.matches as m (m.key + m.value)}
+							<span class="rounded-full bg-sky-50 px-2 py-0.5 text-xs text-sky-800">
+								{m.label}: {m.value}
+							</span>
+						{/each}
+					</div>
+				{/if}
+				{#if msg.role === 'assistant' && msg.products && !msg.filters?.only}
 					<p class="mt-1 text-xs text-slate-400">
 						{msg.products.length
 							? `Výběr v galerii: ${msg.products.length} ${msg.products.length === 1 ? 'položka' : msg.products.length < 5 ? 'položky' : 'položek'}`
