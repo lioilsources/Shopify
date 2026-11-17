@@ -13,7 +13,8 @@ import re
 import unicodedata
 from collections.abc import Sequence
 
-from sqlalchemy import func, select, text
+from sqlalchemy import String, func, or_, select, text
+from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.orm import Session, joinedload
 
 from brain.config import settings
@@ -71,22 +72,34 @@ def rrf_fuse(rankings: Sequence[tuple[Sequence[int], float]], limit: int) -> lis
     return sorted(scores, key=lambda pid: (-scores[pid], pid))[:limit]
 
 
-def _base_ids_query(category_slug: str | None):
+Filters = dict[str, list[str]] | None
+
+
+def _base_ids_query(category_slug: str | None, filters: Filters = None):
     stmt = select(Product.id).where(Product.status == STATUS_LISTED)
     if category_slug:
         stmt = stmt.join(Category).where(Category.slug == category_slug)
+    # Set filters, same semantics as the web BFF: scalar equal or list overlap.
+    for key, values in (filters or {}).items():
+        if values:
+            stmt = stmt.where(
+                or_(
+                    Product.attributes[key].astext.in_(values),
+                    Product.attributes[key].has_any(array(values, type_=String)),
+                )
+            )
     return stmt
 
 
 def fulltext_ids(
-    session: Session, query: str, category_slug: str | None, limit: int
+    session: Session, query: str, category_slug: str | None, limit: int, filters: Filters = None
 ) -> list[int]:
     tsquery = build_tsquery(query)
     if not tsquery:
         return []
     q = func.to_tsquery(text("'simple'"), tsquery)
     stmt = (
-        _base_ids_query(category_slug)
+        _base_ids_query(category_slug, filters)
         .where(Product.search_tsv.op("@@")(q))
         .order_by(func.ts_rank(Product.search_tsv, q).desc(), Product.id)
         .limit(limit)
@@ -95,7 +108,7 @@ def fulltext_ids(
 
 
 def vector_ids(
-    session: Session, query: str, category_slug: str | None, limit: int
+    session: Session, query: str, category_slug: str | None, limit: int, filters: Filters = None
 ) -> list[int]:
     if not settings.embeddings_enabled:
         return []
@@ -103,7 +116,7 @@ def vector_ids(
     if vec is None:
         return []
     stmt = (
-        _base_ids_query(category_slug)
+        _base_ids_query(category_slug, filters)
         .join(ProductEmbedding, ProductEmbedding.product_id == Product.id)
         .where(ProductEmbedding.model == settings.embedding_model_name)
         .order_by(ProductEmbedding.embedding.cosine_distance(vec))
@@ -112,17 +125,7 @@ def vector_ids(
     return list(session.scalars(stmt))
 
 
-def search_products(
-    session: Session, query: str, category_slug: str | None = None, limit: int = 5
-) -> list[Product]:
-    pool = limit * 4
-    ranked = rrf_fuse(
-        [
-            (fulltext_ids(session, query, category_slug, pool), 1.0),
-            (vector_ids(session, query, category_slug, pool), 1.0),
-        ],
-        limit,
-    )
+def _load(session: Session, ranked: list[int]) -> list[Product]:
     if not ranked:
         return []
     rows = session.scalars(
@@ -130,6 +133,34 @@ def search_products(
     ).all()
     by_id = {p.id: p for p in rows}
     return [by_id[pid] for pid in ranked if pid in by_id]
+
+
+def search_products(
+    session: Session,
+    query: str,
+    category_slug: str | None = None,
+    limit: int = 5,
+    filters: Filters = None,
+) -> list[Product]:
+    pool = limit * 4
+    ranked = rrf_fuse(
+        [
+            (fulltext_ids(session, query, category_slug, pool, filters), 1.0),
+            (vector_ids(session, query, category_slug, pool, filters), 1.0),
+        ],
+        limit,
+    )
+    return _load(session, ranked)
+
+
+def filtered_products(
+    session: Session, category_slug: str | None, filters: Filters, limit: int
+) -> tuple[list[Product], int]:
+    """Products matching filters only (no text left in the query) and their count."""
+    base = _base_ids_query(category_slug, filters)
+    total = session.scalar(select(func.count()).select_from(base.subquery())) or 0
+    ids = list(session.scalars(base.order_by(Product.id).limit(limit)))
+    return _load(session, ids), total
 
 
 def search_mode() -> str:

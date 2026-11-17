@@ -39,10 +39,20 @@ export interface ProductCard {
 	category_slug: string;
 }
 
+/** Filters the brain recognised in a chat query (rule based, no LLM). */
+export interface ChatFilters {
+	filters: Record<string, string[]>;
+	matches: { key: string; label: string; value: string }[];
+	/** true = the query was only filters; the gallery shows every match */
+	only: boolean;
+	total: number | null;
+}
+
 export interface ChatMsg {
 	role: 'user' | 'assistant';
 	content: string;
 	products?: ProductCard[];
+	filters?: ChatFilters;
 }
 
 export type ProductStatus = 'draft' | 'listed' | 'hidden';

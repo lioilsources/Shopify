@@ -22,7 +22,7 @@ Přílohy: [03-USE-CASES.md](03-USE-CASES.md) (produkty a tiskové profily),
 | 0 rešerše a rozhodnutí | hotovo 16. 11. 2026 | `docs/DECISIONS.md`, `REUSE.md`, `GALLERY_API.md`, `LICENCES.md`, `FULFILMENT.md`, `CONTENT_POLICY.md`, `CLAUDE.md` |
 | S showcase (souběžně) | — | plán 04; začíná srovnáním schnell × dev × Qwen; potřebuje okna GPU přes broker |
 | T tiskový bench (souběžně) | — | potřebuje okno ComfyUI přes broker |
-| 1 katalog a výloha | — | |
+| 1 katalog a výloha | rozpracováno | hotovo: krok 2 (import z galerie), 3 (vhodnost tisku), 4a (detail, náhled s vodoznakem), 5 (chat bez LLM: slova → filtry); zbývá 4b, 6, 7 |
 | 2 tisková data | — | |
 | 3 mobilní appka | — | |
 | 4 platby a výroba přes POD | — | |

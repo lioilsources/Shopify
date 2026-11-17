@@ -91,3 +91,41 @@ def test_fulltext_ignores_accents_and_respects_category(client, db):
 def test_status_change_rejects_unknown_ids(client, db):
     res = client.post("/admin/products/status", json={"ids": [999], "status": "listed"}, headers=ADMIN)
     assert res.status_code == 404
+
+
+def _sse_events(body: str) -> dict:
+    import json
+
+    out = {}
+    for block in body.strip().split("\n\n"):
+        lines = dict(line.split(": ", 1) for line in block.splitlines())
+        out.setdefault(lines["event"], []).append(json.loads(lines["data"]))
+    return out
+
+
+def test_chat_maps_words_to_filters_without_llm(client, db):
+    _category(db, slug="zvirata", name="Zvířata")
+    a = _ingest(client, category_slug="zvirata", name="Liška v lese", price_czk=None,
+                attributes={"styl": "watercolor", "hodi_se_na": ["Hrnek", "Plakát"]})["id"]
+    b = _ingest(client, category_slug="zvirata", name="Liška ve sněhu", price_czk=None,
+                attributes={"styl": "anime", "hodi_se_na": ["Plakát"]})["id"]
+    c = _ingest(client, category_slug="zvirata", name="Sova", price_czk=None,
+                attributes={"styl": "watercolor", "hodi_se_na": ["Hrnek"]})["id"]
+    client.post("/admin/products/status", json={"ids": [a, b, c], "status": "listed"}, headers=ADMIN)
+
+    ev = _sse_events(client.post("/chat", json={
+        "messages": [{"role": "user", "content": "liška akvarel na hrnek"}]}).text)
+    assert ev["filters"][0]["filters"] == {"styl": ["watercolor"], "hodi_se_na": ["Hrnek"]}
+    assert ev["filters"][0]["only"] is False
+    assert [p["id"] for p in ev["products"][0]] == [a]
+    answer = "".join(t["text"] for t in ev["token"])
+    assert "Hledám bez asistenta" in answer and "Hrnek" in answer
+
+    ev = _sse_events(client.post("/chat", json={
+        "messages": [{"role": "user", "content": "na hrnek"}], "category": "zvirata"}).text)
+    assert ev["filters"][0]["only"] is True and ev["filters"][0]["total"] == 2
+    assert {p["id"] for p in ev["products"][0]} == {a, c}
+
+    ev = _sse_events(client.post("/chat", json={
+        "messages": [{"role": "user", "content": "sova"}]}).text)
+    assert "filters" not in ev and [p["id"] for p in ev["products"][0]] == [c]
