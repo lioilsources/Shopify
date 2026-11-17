@@ -29,7 +29,7 @@ end-to-end potřebuje Postgres (dev DB na JODĚ, na Macu Docker neběží).
 - Chat mění výběr v galerii; filtry vznikají z ingestu, nikdy natvrdo ve webu.
 - Obchod funguje bez GPU: hledání, filtry, detail a poptávka bez LLM.
 - Nic není veřejné bez schválení; výloha jen SFW ze session `showcase/`.
-- Výtvory z nahraných fotek soukromé navždy; ve v1 bez lidí na fotkách.
+- Výtvory z nahraných fotek soukromé navždy; ve v1 bez lidí na fotkách (výjimka R14: vygenerované demo portréty).
 - Klient (web, appka) nenese žádný token.
 - Modely do prodeje jen podle `docs/LICENCES.md`.
 - SPARK jen přes `sparkctl`; nic na SPARKu neinstaluj, chybějící model = otázka.

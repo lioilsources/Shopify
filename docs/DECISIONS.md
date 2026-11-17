@@ -18,6 +18,7 @@ zapisuje sem s datem, ne přepisem řádku.
 | R10 | Fotky lidí v tvorbě z fotky | **Bez lidí ve v1.** Jen mazlíčci, auta, domy, plyšáci a předměty. | Zachování tváře a souhlas se zpracováním tváře se ve v1 nestaví; nahraná fotka s detekovanou lidskou tváří se odmítne. Lidi až po vyřešení R7. |
 | R11 | Fakturace, DPH, doručení | **Fakturuje vlastník, start ČR + SK.** | Ceny v CZK (SK v EUR až s platbami, fáze 4). |
 | R12 | GPU pro veřejnost | **Podle návrhu plánu:** obchod plně použitelný bez LLM (hybridní hledání, filtry), chat jen když LLM běží; tisková data dávkově se slibem „do 24 h“. Po prvních číslech rozhodnout mezi malým LLM vedle ComfyUI a cloudovým API. | Režim bez LLM je provozní režim, ne jen vývojový. |
+| R14 | Tváře v demo katalogu | **Výjimka jen pro demo (17. 11. 2026):** čistě vygenerované tváře bez předlohy, tedy děti, rodiče, prarodiče, miminka a tváře zvířat a ufonů, ve stylech Restyleru. | Jen přes `brain.demo_import` s příznakem `demo`, nikdy na prodej, nikdy z galerie ani z nahrané fotky. Žádná skutečná osoba, celebrita ani podoba. Děti jen v rodinném a portrétním kontextu, oblečené. Téma `portraits` import z galerie odmítá. R10 pro tvorbu z fotky platí dál. |
 | R13 | Témata výlohy a pořadí | **Podle plánu 04, §1:** zvířata, dinosauři, stroje a vozidla, plyšáci, krajiny, psi a kočky. | Pořadí stopy S i ingestu výlohy. |
 
 ## Co z toho plyne pro plán

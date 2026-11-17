@@ -17,8 +17,9 @@ Do katalogu smí obrázek, jen když projde vším níže (brána zveřejnění,
 5. Neobsahuje cizí postavu (film, hra, pohádka, maskot), značku, logo, nápis,
    podpis ani vodoznak. Automat hledá podle tagů a posílá k ručnímu posouzení.
 6. Neobsahuje skutečnou osobu ani podobu skutečné osoby. Obličeje se do
-   katalogu negenerují vůbec.
-7. Neobsahuje děti. Motivy pro děti mají za hrdinu zvíře, stroj, hračku nebo
+   katalogu negenerují vůbec. Výjimka R14: demo portréty čistě vygenerovaných
+   tváří, jen s příznakem `demo` a nikdy na prodej.
+7. Neobsahuje děti (mimo demo portréty podle R14). Motivy pro děti mají za hrdinu zvíře, stroj, hračku nebo
    robota; lidské postavy jen dospělé a obecné.
 8. Schválil ho vlastník (arch v adminu). Automat třídí, nikdy sám neschvaluje
    ani nevyřazuje.

@@ -26,7 +26,7 @@ from brain.gate import evaluate, reason
 from brain.previews import preview_url
 from brain.models import STATUS_HIDDEN, STATUS_LISTED, ImportState, Product
 from brain.storage import LocalStorage
-from brain.themes import THEMES, ensure_themes
+from brain.themes import DEMO_ONLY_THEMES, THEMES, ensure_themes
 
 log = logging.getLogger(__name__)
 
@@ -128,6 +128,8 @@ def import_item(
     profiles: list[Profile] | None = None,
 ) -> None:
     theme = THEMES.get(item.get("theme") or "")
+    if item.get("theme") in DEMO_ONLY_THEMES and not str(item.get("sourceKey", "")).startswith("demo:"):
+        theme = None  # R14: faces only from demo batches
     sha = (item.get("sha256") or "").lower()
     if theme is None or not item.get("imageId") or len(sha) != 64:
         log.warning("skipping export item %r: unknown theme or missing ids", item.get("imageId"))

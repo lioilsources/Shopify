@@ -83,3 +83,12 @@ def test_hide_legacy_and_purge(db, tmp_path):
     assert db.scalar(select(Product).where(Product.name == "Boty")).status == "hidden"
     assert purge_demo(db) == 3
     assert [p.name for p in db.scalars(select(Product))] == ["Boty"]
+
+
+def test_gallery_import_never_takes_portraits(db, tmp_path):
+    from brain.gallery_import import ImportStats, import_item
+
+    stats = ImportStats()
+    item = {"imageId": "g-1", "sha256": "a" * 64, "theme": "portraits", "width": 1024, "height": 1024}
+    import_item(db, None, LocalStorage(tmp_path), item, stats)
+    assert stats.skipped == 1 and db.scalar(select(Product)) is None
