@@ -12,6 +12,7 @@ def test_use_case_style_and_rest():
     ext = extract("liška akvarel na hrnek", SCHEMAS)
     assert ext.filters == {"styl": ["watercolor"], "hodi_se_na": ["Hrnek"]}
     assert ext.rest == "liska na"
+    assert extract("tričko velikost M na hrnek", SCHEMAS).rest == "velikost M na"
     assert [m.label for m in ext.matches] == ["Styl", "Hodí se na"]
 
 

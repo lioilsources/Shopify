@@ -130,7 +130,9 @@ def extract(
     Longer values are tried first so "Obal na mobil" beats a shorter value.
     Matched words are removed from the rest that goes to fulltext.
     """
-    tokens = _tokens(query)
+    # Original case is kept for the fulltext rest: "M" or "XL" must stay sizes.
+    original = _TOKEN.findall(strip_accents(query))
+    tokens = [t.lower() for t in original]
     used: set[int] = set()
     out = Extraction()
     owner: dict[str, tuple[str, str]] = {}  # normalised value -> (key, original value)
@@ -182,7 +184,7 @@ def extract(
                 out.matches.append(Match(key="category", label="Kategorie", value=name))
                 break
 
-    out.rest = " ".join(t for i, t in enumerate(tokens) if i not in used)
+    out.rest = " ".join(t for i, t in enumerate(original) if i not in used)
     return out
 
 
