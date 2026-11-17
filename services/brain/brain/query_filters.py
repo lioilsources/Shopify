@@ -64,6 +64,8 @@ class Extraction:
     filters: dict[str, list[str]] = field(default_factory=dict)
     matches: list[Match] = field(default_factory=list)
     rest: str = ""
+    # Category named in the query ("krajina na plakát"), when none is selected.
+    category: str | None = None
 
 
 def _norm(value: str) -> str:
@@ -119,7 +121,9 @@ def _schemas(session: Session, category_slug: str | None) -> list[FilterSchema]:
 
 
 def extract(
-    query: str, schemas: list[tuple[str, str, list[str]]]
+    query: str,
+    schemas: list[tuple[str, str, list[str]]],
+    categories: list[tuple[str, str]] | None = None,
 ) -> Extraction:
     """Match query words to schema values; schemas = [(attr_key, label, values)].
 
@@ -166,6 +170,18 @@ def extract(
         if positions is not None:
             add(key, value, positions)
 
+    # A word naming a category ("krajina" -> Krajiny a příroda) scopes the search.
+    # Only the first word of the name counts: "a příroda" or "a hračky" are not intent.
+    for slug, name in categories or []:
+        head = _tokens(name)[:1]
+        if head and len(head[0]) > 3:
+            positions = _find(tokens, used, head)
+            if positions is not None:
+                used.update(positions)
+                out.category = slug
+                out.matches.append(Match(key="category", label="Kategorie", value=name))
+                break
+
     out.rest = " ".join(t for i, t in enumerate(tokens) if i not in used)
     return out
 
@@ -176,4 +192,9 @@ def extract_filters(session: Session, query: str, category_slug: str | None) -> 
     for schema in _schemas(session, category_slug):
         label, values = merged.setdefault(schema.attr_key, (schema.label, set()))
         values.update(str(v) for v in (schema.config or {}).get("values", []))
-    return extract(query, [(k, label, sorted(vals)) for k, (label, vals) in merged.items()])
+    categories = None
+    if not category_slug:
+        categories = [(c.slug, c.name) for c in session.scalars(select(Category))]
+    return extract(
+        query, [(k, label, sorted(vals)) for k, (label, vals) in merged.items()], categories
+    )
