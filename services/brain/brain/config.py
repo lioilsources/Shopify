@@ -2,7 +2,10 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-_REPO_ROOT = Path(__file__).resolve().parents[3]
+# Repo root in a checkout (services/brain/brain/config.py); an installed package
+# (Docker image) has no such parents, so fall back to the working directory.
+_HERE = Path(__file__).resolve()
+_REPO_ROOT = _HERE.parents[3] if len(_HERE.parents) > 3 else Path.cwd()
 
 
 class Settings(BaseSettings):
