@@ -27,6 +27,7 @@ SYNONYMS: dict[str, list[str]] = {
     "taska": ["Plátěná taška"],
     "tapeta": ["Fototapeta"],
     "tapetu": ["Fototapeta"],
+    "tapety": ["Fototapeta"],
     "mobil": ["Obal na mobil"],
     "kryt": ["Obal na mobil"],
     "plakat": ["Plakát"],
@@ -175,11 +176,16 @@ def extract(
     # A word naming a category ("krajina" -> Krajiny a příroda) scopes the search.
     # Only the first word of the name counts: "a příroda" or "a hračky" are not intent.
     for slug, name in categories or []:
-        head = _tokens(name)[:1]
-        if head and len(head[0]) > 3:
-            positions = _find(tokens, used, head)
+        words = [w for w in _tokens(name) if len(w) > 3]
+        if words:
+            positions = _find(tokens, used, words[:1])
             if positions is not None:
                 used.update(positions)
+                # The rest of the name ("tapety" in "vzory a tapety") is not a search term.
+                for word in words[1:]:
+                    more = _find(tokens, used, [word])
+                    if more is not None:
+                        used.update(more)
                 out.category = slug
                 out.matches.append(Match(key="category", label="Kategorie", value=name))
                 break

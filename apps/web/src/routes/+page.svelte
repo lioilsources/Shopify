@@ -24,13 +24,34 @@
 
 	function selectCategory(slug: string | null) {
 		selectedCategory = slug;
+		chatCategory = false;
 		activeFilters = {};
+	}
+
+	// Category chosen by the chat (not by a click); a new query may undo it.
+	let chatCategory = false;
+	let showFilters = $state(false);
+
+	function onChatQuery() {
+		// Every query starts from scratch: earlier chat filters and selection go away.
+		if (chatFilterQuery) {
+			activeFilters = {};
+			chatFilterQuery = null;
+		}
+		if (chatCategory) {
+			selectedCategory = null;
+			chatCategory = false;
+		}
+		chatSelection = null;
 	}
 
 	function onChatFilters(found: ChatFilters, query: string) {
 		// Filters from the chat replace the current ones; a query of filters only
 		// shows every match instead of the chat's top results.
-		if (found.category) selectedCategory = found.category;
+		if (found.category) {
+			selectedCategory = found.category;
+			chatCategory = true;
+		}
 		activeFilters = { ...found.filters };
 		chatSelection = found.only ? null : chatSelection;
 		chatFilterQuery = query;
@@ -60,17 +81,33 @@
 	});
 </script>
 
-<svelte:head><title>ChatShop</title></svelte:head>
+<svelte:head><title>SlopMarket — AI motivy k potisku</title></svelte:head>
 
 <div class="flex h-full flex-col">
 	<!-- ~20 % — chat asistent -->
 	<section class="h-[30dvh] min-h-44 border-b-2 border-slate-200 bg-white">
-		<Chat category={selectedCategory} onselect={onChatSelect} onfilters={onChatFilters} />
+		<Chat category={selectedCategory} onselect={onChatSelect} onfilters={onChatFilters} onquery={onChatQuery} />
 	</section>
 
 	<!-- ~80 % — galerie s filtry -->
-	<section class="flex min-h-0 flex-1">
-		<aside class="w-60 shrink-0 space-y-5 overflow-y-auto border-r border-slate-200 bg-white p-4">
+	<section class="flex min-h-0 flex-1 flex-col md:flex-row">
+		<!-- On phones the sidebar folds into a toggle above the gallery. -->
+		<button
+			class="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-2 text-sm font-medium md:hidden"
+			onclick={() => (showFilters = !showFilters)}
+			aria-expanded={showFilters}
+		>
+			<span>
+				Kategorie a filtry{selectedCategory
+					? `: ${data.categories.find((c) => c.slug === selectedCategory)?.name ?? ''}`
+					: ''}
+			</span>
+			<span aria-hidden="true">{showFilters ? '▲' : '▼'}</span>
+		</button>
+		<aside
+			class={(showFilters ? 'block' : 'hidden') +
+				' max-h-[45dvh] w-full shrink-0 space-y-5 overflow-y-auto border-b border-slate-200 bg-white p-4 md:block md:max-h-none md:w-60 md:border-r md:border-b-0'}
+		>
 			<div>
 				<h2 class="mb-1.5 text-sm font-semibold text-slate-700">Kategorie</h2>
 				<div class="flex flex-col gap-1">

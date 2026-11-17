@@ -36,8 +36,12 @@ souhlasem vlastníka.
 
 ## Aplikace (brain + web) na JODĚ
 
-`docker-compose.app.yml`, projekt `shopify-app`, jen v LAN na portu 8099.
-Veřejná doména a tunel přijdou s krokem 7.
+`docker-compose.app.yml`, projekt `shopify-app`: veřejně na https://slop.ol1n.com
+přes vlastní tunel `slopmarket`, v LAN i na portu 8099. `/admin`, `/api/admin`
+a `/api/ingest` jsou za Cloudflare Access (aplikace `slopmarket-admin`).
+
+Nasazení jedním příkazem z Macu: `infra/joda/deploy.sh` (tunel a DNS založí
+při prvním běhu na JODĚ). Ruční postup níže.
 
 1. Synchronizace z Macu (z kořene repa):
    ```

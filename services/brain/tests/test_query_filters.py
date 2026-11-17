@@ -55,3 +55,9 @@ def test_category_word_scopes_search():
     assert ext.rest == "na"
     assert extract("plyšáka", SCHEMAS, cats).category == "plysaci"
     assert extract("příroda", SCHEMAS, cats).category is None
+
+
+def test_category_consumes_all_name_words():
+    cats = [("vzory", "Vzory a tapety")]
+    ext = extract("vzory a tapety", SCHEMAS, cats)
+    assert ext.category == "vzory" and ext.rest == "a"
