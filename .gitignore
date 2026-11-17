@@ -25,3 +25,12 @@ infra/pgdata/
 
 # Runtime data (media, import state, logs)
 run/
+# devconv:start
+*.p8
+*.p12
+*.jks
+key.properties
+.claude/settings.local.json
+CLAUDE.local.md
+.astro/
+# devconv:end
