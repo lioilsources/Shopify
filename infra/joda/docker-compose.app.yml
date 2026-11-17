@@ -1,0 +1,53 @@
+# SlopMarket app (brain + web) on JODA, next to the dev Postgres
+# (docker-compose.db.yml, project shopify-dev). LAN only for now; a tunnel and
+# a public domain come with plan 02, phase 1 step 7.
+#
+# Deployed to ~/deploy/Shopify (src/ is an rsync of services/brain and apps/web):
+#   docker compose -p shopify-app -f docker-compose.app.yml up -d --build
+# Stop one service with `stop <service>`, never `down` (shared JODA rule).
+#
+# Values from ~/deploy/Shopify/.env (never committed):
+#   POSTGRES_PASSWORD  same as the db service
+#   ADMIN_TOKEN        generated on JODA
+#   WEB_BIND           LAN address of JODA (default loopback only)
+#   WEB_PORT           8099 (see the shared port registry)
+#   LLM_BASE_URL, EMBEDDINGS_BASE_URL  empty = shop without GPU (fulltext + filters)
+name: shopify-app
+
+services:
+  brain:
+    build: ./src/services/brain
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg://chatshop:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/chatshop_dev
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?set ADMIN_TOKEN}
+      MEDIA_DIR: /media
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      LLM_API_KEY: ${LLM_API_KEY:-not-needed}
+      EMBEDDINGS_BASE_URL: ${EMBEDDINGS_BASE_URL:-}
+      EMBEDDINGS_API_KEY: ${EMBEDDINGS_API_KEY:-}
+    volumes:
+      # originals + preview cache; pool dataset once it exists
+      - ${MEDIA_DIR:-./media}:/media
+    mem_limit: 384m
+    networks: [shop]
+
+  web:
+    build: ./src/apps/web
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://chatshop:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/chatshop_dev
+      BRAIN_URL: http://brain:8000
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?set ADMIN_TOKEN}
+      PORT: "3000"
+    ports:
+      - "${WEB_BIND:-127.0.0.1}:${WEB_PORT:-8099}:3000"
+    depends_on: [brain]
+    mem_limit: 256m
+    networks: [shop]
+
+networks:
+  # the dev Postgres network: the db service answers as `db`
+  shop:
+    external: true
+    name: shopify-dev_default

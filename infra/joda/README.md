@@ -33,3 +33,22 @@ cd services/brain
 
 Zastavovat jen službu `db` příkazem `stop`; mazání svazku s daty jen se
 souhlasem vlastníka.
+
+## Aplikace (brain + web) na JODĚ
+
+`docker-compose.app.yml`, projekt `shopify-app`, jen v LAN na portu 8099.
+Veřejná doména a tunel přijdou s krokem 7.
+
+1. Synchronizace z Macu (z kořene repa):
+   ```
+   rsync -a --delete --exclude node_modules --exclude .svelte-kit --exclude build --exclude .venv --exclude __pycache__ \
+     services/brain joda:deploy/Shopify/src/services/
+   rsync -a --delete --exclude node_modules --exclude .svelte-kit --exclude build apps/web joda:deploy/Shopify/src/apps/
+   rsync -a infra/joda/docker-compose.app.yml joda:deploy/Shopify/
+   rsync -a run/media/ joda:deploy/Shopify/media/      # originály a cache náhledů
+   ```
+2. `~/deploy/Shopify/.env` doplnit o `ADMIN_TOKEN` (vygenerovat na JODĚ),
+   `WEB_BIND` (LAN adresa JODY) a `WEB_PORT=8099`.
+3. `docker compose -p shopify-app -f docker-compose.app.yml up -d --build`
+
+Brain při startu sám spustí `alembic upgrade head`. Zastavovat jen `stop <služba>`.
