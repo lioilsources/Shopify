@@ -1,6 +1,8 @@
-# SlopMarket app (brain + web) on JODA, next to the dev Postgres
-# (docker-compose.db.yml, project shopify-dev). LAN only for now; a tunnel and
-# a public domain come with plan 02, phase 1 step 7.
+# SlopMarket app (brain + web + tunnel) on JODA, next to the dev Postgres
+# (docker-compose.db.yml, project shopify-dev). Public at https://slop.ol1n.com
+# through its own Cloudflare tunnel; /admin, /api/admin and /api/ingest sit
+# behind Cloudflare Access (app slopmarket-admin, owner-sso). Without that Access
+# app the admin is open: never route the tunnel before it exists.
 #
 # Deployed to ~/deploy/Shopify (src/ is an rsync of services/brain and apps/web):
 #   docker compose -p shopify-app -f docker-compose.app.yml up -d --build
@@ -44,6 +46,16 @@ services:
       - "${WEB_BIND:-127.0.0.1}:${WEB_PORT:-8099}:3000"
     depends_on: [brain]
     mem_limit: 256m
+    networks: [shop]
+
+  cloudflared:
+    image: cloudflare/cloudflared:2026.7.3
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --config /etc/cloudflared/config.yml run
+    volumes:
+      - ./cloudflared:/etc/cloudflared:ro
+    depends_on: [web]
+    mem_limit: 96m
     networks: [shop]
 
 networks:

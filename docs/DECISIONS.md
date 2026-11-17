@@ -14,7 +14,7 @@ zapisuje sem s datem, ne přepisem řádku.
 | R6 | Partneři pro velký formát | **Najít kandidáty** (rešerše). | Seznam v [FULFILMENT.md](FULFILMENT.md); do výběru jen poptávka. |
 | R7 | Které modely smí do prodeje | **Podle [LICENCES.md](LICENCES.md).** FLUX.1-dev a odvozené ven; placená tvorba s tváří (InsightFace) se nespouští do vyjasnění. | Showcase jen z licenčně čistých modelů. |
 | R8 | Jména umělců ve stylech | **Jen autoři mimo ochranu** (70 let po smrti); jinak popisný název stylu. | Registr stylů potřebuje rok úmrtí autora. |
-| R9 | Veřejný název a doména | **SlopMarket.** Doména počká. | Pracovní název „ImageMarket“ v plánech zůstává jako název projektu; veřejné texty používají SlopMarket. |
+| R9 | Veřejný název a doména | **SlopMarket** na **https://slop.ol1n.com** (17. 11. 2026), katalog veřejně hned; admin a ingest za Cloudflare Access. | Pracovní název „ImageMarket“ v plánech zůstává jako název projektu; veřejné texty používají SlopMarket. |
 | R10 | Fotky lidí v tvorbě z fotky | **Bez lidí ve v1.** Jen mazlíčci, auta, domy, plyšáci a předměty. | Zachování tváře a souhlas se zpracováním tváře se ve v1 nestaví; nahraná fotka s detekovanou lidskou tváří se odmítne. Lidi až po vyřešení R7. |
 | R11 | Fakturace, DPH, doručení | **Fakturuje vlastník, start ČR + SK.** | Ceny v CZK (SK v EUR až s platbami, fáze 4). |
 | R12 | GPU pro veřejnost | **Podle návrhu plánu:** obchod plně použitelný bez LLM (hybridní hledání, filtry), chat jen když LLM běží; tisková data dávkově se slibem „do 24 h“. Po prvních číslech rozhodnout mezi malým LLM vedle ComfyUI a cloudovým API. | Režim bez LLM je provozní režim, ne jen vývojový. |

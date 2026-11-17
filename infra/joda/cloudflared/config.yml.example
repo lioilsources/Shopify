@@ -1,0 +1,11 @@
+# Filled on JODA by infra/joda/deploy.sh (tunnel id and hostname); the
+# generated config.yml and <id>.json credentials never leave JODA.
+tunnel: <TUNNEL-ID>
+credentials-file: /etc/cloudflared/<TUNNEL-ID>.json
+
+ingress:
+  - hostname: <PUBLIC>
+    service: http://web:3000
+    originRequest:
+      connectTimeout: 30s
+  - service: http_status:404
