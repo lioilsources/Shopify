@@ -2,7 +2,8 @@
 
 SSE eventy:
   token    {"text": "..."}          — kousek odpovědi
-  filters  {filters: {key: [values]}, matches: [{key, label, value}], only: bool, total: int|null}
+  filters  {filters: {key: [values]}, category: slug|null, matches: [{key, label, value}],
+            only: bool, total: int|null}
                                     — set filters recognised in the query (rule based, no LLM);
                                       only=true: nothing but filters, the gallery shows all matches
   products [{id, name, price_czk, image_url, category_slug}, ...]
@@ -100,15 +101,16 @@ async def chat(req: ChatRequest, session: Session = Depends(get_session)):
         (m.content for m in reversed(req.messages) if m.role == "user"), ""
     )
     ext = extract_filters(session, user_query, req.category)
+    category = req.category or ext.category
     filters = ext.filters or None
     total: int | None = None
-    only_filters = bool(filters) and build_tsquery(ext.rest) is None
+    only_filters = bool(ext.matches) and build_tsquery(ext.rest) is None
     if only_filters:
-        products, total = filtered_products(session, req.category, filters, limit=8)
+        products, total = filtered_products(session, category, filters, limit=8)
     else:
-        text_query = ext.rest if filters else user_query
+        text_query = ext.rest if ext.matches else user_query
         products = search_products(
-            session, text_query, category_slug=req.category, limit=8, filters=filters
+            session, text_query, category_slug=category, limit=8, filters=filters
         )
 
     async def event_stream():
@@ -117,6 +119,7 @@ async def chat(req: ChatRequest, session: Session = Depends(get_session)):
                 "filters",
                 {
                     "filters": ext.filters,
+                    "category": ext.category,
                     "matches": [m.__dict__ for m in ext.matches],
                     "only": only_filters,
                     "total": total,

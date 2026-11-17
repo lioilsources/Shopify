@@ -12,6 +12,7 @@ def test_use_case_style_and_rest():
     ext = extract("liška akvarel na hrnek", SCHEMAS)
     assert ext.filters == {"styl": ["watercolor"], "hodi_se_na": ["Hrnek"]}
     assert ext.rest == "liska na"
+    assert extract("tričko velikost M na hrnek", SCHEMAS).rest == "velikost M na"
     assert [m.label for m in ext.matches] == ["Styl", "Hodí se na"]
 
 
@@ -45,3 +46,12 @@ def test_short_words_alone_never_match():
 def test_multiword_value_beats_partial():
     ext = extract("podložka pod myš s liškou", SCHEMAS)
     assert ext.filters == {"hodi_se_na": ["Podložka pod myš"]}
+
+
+def test_category_word_scopes_search():
+    cats = [("krajiny", "Krajiny a příroda"), ("plysaci", "Plyšáci a hračky")]
+    ext = extract("krajina na plakát", SCHEMAS, cats)
+    assert ext.category == "krajiny" and ext.filters == {"hodi_se_na": ["Plakát"]}
+    assert ext.rest == "na"
+    assert extract("plyšáka", SCHEMAS, cats).category == "plysaci"
+    assert extract("příroda", SCHEMAS, cats).category is None
