@@ -1,0 +1,185 @@
+batch: demo-02
+note: 'Tváře podle R14: jen čistě vygenerované, žádná skutečná osoba ani podoba; děti jen v rodinném a portrétním kontextu, oblečené. Licence jako demo-01.'
+output: <id>.png + manifest.json [{id, file, model, seed, width, height, steps}]
+items:
+- id: portraits-f01
+  theme: portraits
+  style: Vermeer
+  subject: dítě
+  name: Holčička s perlovou čelenkou
+  prompt: portrait of a fictional little girl about seven years old in the style of Johannes Vermeer, soft window light, blue headscarf, entirely fictional person, not resembling any real or famous person, wholesome, fully
+    clothed
+  width: 1024
+  height: 1536
+  seed: 1935445183
+- id: portraits-f02
+  theme: portraits
+  style: anime
+  subject: dítě
+  name: Kluk s papírovým drakem
+  prompt: anime style portrait of a fictional cheerful boy holding a paper kite, summer sky, entirely fictional person, not resembling any real or famous person, wholesome, fully clothed
+  width: 1024
+  height: 1024
+  seed: 1409049659
+- id: portraits-f03
+  theme: portraits
+  style: komiks
+  subject: dítě
+  name: Sourozenci v komiksu
+  prompt: comic book style portrait of two fictional siblings laughing, halftone, bold ink, entirely fictional person, not resembling any real or famous person, wholesome, fully clothed
+  width: 1024
+  height: 1024
+  seed: 1783892502
+- id: portraits-f04
+  theme: portraits
+  style: akvarel
+  subject: miminko
+  name: Spící miminko
+  prompt: soft watercolor of a fictional sleeping baby wrapped in a knitted blanket, pastel, entirely fictional person, not resembling any real or famous person, wholesome, fully clothed
+  width: 1024
+  height: 1024
+  seed: 437564738
+- id: portraits-f05
+  theme: portraits
+  style: Van Gogh
+  subject: miminko
+  name: Miminko ve slunečnicích
+  prompt: portrait of a fictional smiling baby among sunflowers in the style of Vincent van Gogh, swirling brushstrokes, entirely fictional person, not resembling any real or famous person, wholesome, fully clothed
+  width: 1024
+  height: 1024
+  seed: 736334295
+- id: portraits-f06
+  theme: portraits
+  style: film noir
+  subject: rodiče
+  name: Rodiče ve stylu noir
+  prompt: black and white film noir portrait of a fictional couple in their thirties, dramatic side light, 1940s clothes, entirely fictional person, not resembling any real or famous person, wholesome, fully clothed
+  width: 1024
+  height: 1536
+  seed: 159859784
+- id: portraits-f07
+  theme: portraits
+  style: pop art
+  subject: rodiče
+  name: Rodina v pop artu
+  prompt: pop art four-panel portrait of a fictional family of four, bright colors, entirely fictional person, not resembling any real or famous person, wholesome, fully clothed
+  width: 1024
+  height: 1024
+  seed: 97646726
+- id: portraits-f08
+  theme: portraits
+  style: renesanční portrét
+  subject: prarodiče
+  name: Babička a děda
+  prompt: renaissance style double portrait of a fictional grandmother and grandfather, warm smiles, dark background, entirely fictional person, not resembling any real or famous person, wholesome, fully clothed
+  width: 1024
+  height: 1536
+  seed: 1616137666
+- id: portraits-f09
+  theme: portraits
+  style: fotorealistický
+  subject: prarodiče
+  name: Děda s vnučkou na lavičce
+  prompt: photorealistic portrait of a fictional grandfather reading to his granddaughter on a garden bench, golden hour, entirely fictional person, not resembling any real or famous person, wholesome, fully clothed
+  width: 1024
+  height: 1536
+  seed: 38849782
+- id: portraits-f10
+  theme: portraits
+  style: retro sci-fi
+  subject: ufon
+  name: Ufon s anténkami
+  prompt: retro 1960s sci-fi portrait of a friendly green alien with antennae, pulp illustration
+  width: 1024
+  height: 1536
+  seed: 483401461
+- id: portraits-f11
+  theme: portraits
+  style: 3D animace
+  subject: ufon
+  name: Malý ufoun
+  prompt: 3D animated style portrait of a cute small blue alien with big eyes, soft studio light
+  width: 1024
+  height: 1024
+  seed: 818833807
+- id: pets-f01
+  theme: pets
+  style: Vermeer
+  subject: pes
+  name: Pes s perlovou náušnicí
+  prompt: portrait of a golden retriever in the style of Johannes Vermeer, blue and yellow turban
+  width: 1024
+  height: 1536
+  seed: 678795908
+- id: pets-f02
+  theme: pets
+  style: anime
+  subject: kočka
+  name: Anime kočičí tvář
+  prompt: anime style close-up face of a fluffy grey cat, big sparkling eyes
+  width: 1024
+  height: 1024
+  seed: 1062310112
+- id: pets-f03
+  theme: pets
+  style: olejomalba
+  subject: labrador
+  name: Portrét labradora
+  prompt: classical oil portrait of a black labrador, dignified, dark background
+  width: 1024
+  height: 1536
+  seed: 1510310347
+- id: animals-f01
+  theme: animals
+  style: pop art
+  subject: žirafa
+  name: Pop art žirafa
+  prompt: pop art close-up face of a giraffe, bold colors, four panels
+  width: 1024
+  height: 1024
+  seed: 909477281
+- id: animals-f02
+  theme: animals
+  style: akvarel
+  subject: králík
+  name: Králíček v akvarelu
+  prompt: watercolor close-up face of a fluffy bunny with long ears
+  width: 1024
+  height: 1024
+  seed: 1506870711
+- id: animals-f03
+  theme: animals
+  style: fotorealistický
+  subject: gepard
+  name: Tvář geparda
+  prompt: photorealistic close-up face of a cheetah, intense eyes, savanna bokeh
+  width: 1024
+  height: 1536
+  seed: 354700239
+- id: animals-f04
+  theme: animals
+  style: komiks
+  subject: kapybara
+  name: Kapybara v komiksu
+  prompt: comic style portrait of a relaxed capybara wearing a tiny orange on its head
+  width: 1024
+  height: 1024
+  seed: 466706742
+- id: animals-f05
+  theme: animals
+  style: Van Gogh
+  subject: koala
+  name: Koala ve stylu Van Gogha
+  prompt: portrait of a koala in the style of Vincent van Gogh, swirling eucalyptus background
+  width: 1024
+  height: 1024
+  seed: 1454281428
+- id: animals-f06
+  theme: animals
+  style: film noir
+  subject: panda
+  name: Panda noir
+  prompt: black and white film noir portrait of a giant panda wearing a fedora, dramatic shadows
+  width: 1024
+  height: 1536
+  seed: 1875038555

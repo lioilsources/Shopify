@@ -23,6 +23,8 @@ export interface Product {
 	price_czk: number | null;
 	image_url: string;
 	attributes: Record<string, unknown>;
+	/** sample from a demo batch, labelled on the web */
+	demo?: boolean;
 }
 
 /** Aktivní hodnoty filtrů: set -> string[], range -> {min,max}, bool -> boolean, text -> string */

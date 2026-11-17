@@ -76,6 +76,8 @@ class Product(Base):
         JSONB, default=dict, server_default=text("'{}'::jsonb")
     )
     image_sha256: Mapped[str | None] = mapped_column(String(64), index=True, nullable=True)
+    # Sample item (demo batch): labelled "Demo" on the web, purged with `brain.demo_import --purge`.
+    demo: Mapped[bool] = mapped_column(default=False, server_default=text("false"), index=True)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now(), onupdate=func.now())
     search_tsv: Mapped[Any] = mapped_column(
