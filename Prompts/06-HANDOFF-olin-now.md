@@ -1,17 +1,21 @@
 # 06 — Předávka: stránka SlopMarket na olin.now (MacBook)
 
 Pro session `olin.now-Macbook`. Screenshoty dělá MacBook, repo `ol1n.now`.
-Posílá se až po splnění podmínek níže. Dřív by stránka ukazovala demo
-data ChatShopu (boty, disky), ne SlopMarket.
+Posílá se až po splnění podmínek níže.
 
 ## Podmínky odeslání (hlídá Shopify session)
 
-1. V galerii je kolekce `shop` a z ní je importováno a schváleno aspoň
-   20 obrázků (plán 05, část A v FineTuneGallery a import tady).
-2. Staré demo produkty ChatShopu (boty, HDD, trička) jsou skryté.
-3. Běží instance dostupná z MacBooku: buď nasazení (krok 7), nebo dočasně
-   web a brain na M2 vystavené do LAN. Adresu dodá Olin, do repa nepatří.
-4. Olin schválil název a krátký popis níže.
+1. V katalogu je demo dávka `demo/batch-01.yaml` (50 obrázků z L40S,
+   příznak `demo`), importovaná přes `python -m brain.demo_import … --hide-legacy`.
+   Staré vzorky ChatShopu (boty, disky, trička) jsou tím skryté.
+2. Běží instance dostupná z MacBooku: web a brain na M2 vystavené do LAN
+   (`--host 0.0.0.0`), později nasazení (krok 7). Adresu pošle Shopify
+   session ve zprávě, do repa nepatří.
+3. Tvář a lidé: v dávce nejsou (pravidlo v1). Restyler se nefotí, dokud
+   to Olin výslovně nepovolí.
+
+Olin 17. 11. 2026: „handoff MacBook z toho udělá screenshoty a deployne
+na olin.now“. Merge a deploy stránky jsou tedy schválené pro tuhle stránku.
 
 ## Úkol
 
@@ -32,8 +36,11 @@ V `ol1n.now` založit `apps/slopmarket/` podle vzoru `apps/terrareality`
   4. Výsledek dotazu jen z filtrů, například „na hrnek“.
 
   Admin (`/admin/review`) nefotit, není veřejný.
-- `make screenshots && make build`, kontrola v `dist/`, pak PR do `ol1n.now`.
-  O merge a deploy rozhoduje Olin.
+- `make screenshots && make build`, kontrola v `dist/`, PR do `ol1n.now`,
+  merge a `make deploy` (Olin to schválil, viz výše). Gate repa `ol1n.now`
+  musí projít.
+- Na screenshotech je štítek „Demo“. Nezakrývat ho a v textu stránky
+  napsat, že katalog je zatím ukázkový.
 
 ## Text stránky (návrh, česky)
 
