@@ -1,5 +1,8 @@
 FROM python:3.12-slim
 WORKDIR /app
+# DejaVu for the preview watermark (previews.py); slim has no fonts.
+RUN apt-get update && apt-get install -y --no-install-recommends fonts-dejavu-core \
+    && rm -rf /var/lib/apt/lists/*
 COPY pyproject.toml .
 COPY brain ./brain
 COPY alembic.ini .
