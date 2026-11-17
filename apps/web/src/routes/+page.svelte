@@ -30,6 +30,7 @@
 	function onChatFilters(found: ChatFilters, query: string) {
 		// Filters from the chat replace the current ones; a query of filters only
 		// shows every match instead of the chat's top results.
+		if (found.category) selectedCategory = found.category;
 		activeFilters = { ...found.filters };
 		chatSelection = found.only ? null : chatSelection;
 		chatFilterQuery = query;

@@ -44,6 +44,8 @@ export interface ProductCard {
 /** Filters the brain recognised in a chat query (rule based, no LLM). */
 export interface ChatFilters {
 	filters: Record<string, string[]>;
+	/** category named in the query, when none was selected */
+	category: string | null;
 	matches: { key: string; label: string; value: string }[];
 	/** true = the query was only filters; the gallery shows every match */
 	only: boolean;
