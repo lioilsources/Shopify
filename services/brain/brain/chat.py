@@ -81,7 +81,8 @@ def _mock_answer(
     query: str, products: list[Product], ext: Extraction, total: int | None = None
 ) -> str:
     """Honest search-box answer when no LLM runs: what was searched, what was found."""
-    prefix = "Hledám bez asistenta (fulltext a filtry). "
+    how = "podle významu, fulltextu a filtrů" if settings.embeddings_enabled else "fulltext a filtry"
+    prefix = f"Hledám bez asistenta ({how}). "
     if ext.matches:
         prefix += f"Nastavil jsem filtry {_filters_text(ext)}. "
     if not products:
