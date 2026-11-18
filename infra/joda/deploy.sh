@@ -16,7 +16,8 @@ rsync -a --delete "${x[@]}" "$repo/services/brain" "$host:$dest/src/services/"
 rsync -a --delete "${x[@]}" "$repo/apps/web" "$host:$dest/src/apps/"
 rsync -a "$repo/infra/joda/docker-compose.app.yml" "$host:$dest/"
 rsync -a "$repo/infra/joda/cloudflared/config.yml.example" "$host:$dest/cloudflared/"
-[ -d "$repo/run/media" ] && rsync -a "$repo/run/media/" "$host:$dest/media/"
+# originals only: previews are generated (and owned) by the brain container on JODA
+[ -d "$repo/run/media" ] && rsync -a --exclude "public/" "$repo/run/media/" "$host:$dest/media/"
 
 ssh "$host" PUBLIC="$public" bash -s -- "$dest" <<'REMOTE'
 set -euo pipefail
